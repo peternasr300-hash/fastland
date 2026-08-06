@@ -72,6 +72,14 @@ td.checkbox-cell input { width: 16px; height: 16px; cursor: pointer; }
 
 .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
 .loading { text-align: center; color: var(--muted); padding: 40px; font-size: 14px; }
+
+.filter-banner {
+  background: rgba(184,137,42,0.1); border: 1px solid rgba(184,137,42,0.35); border-radius: 14px;
+  padding: 12px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; flex-wrap: wrap; font-size: 13px;
+}
+.filter-banner a { color: var(--gold2); text-decoration: none; font-weight: 700; }
+.filter-banner a:hover { text-decoration: underline; }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -86,10 +94,12 @@ td.checkbox-cell input { width: 16px; height: 16px; cursor: pointer; }
 <div class="container">
   <div class="header-row">
     <div>
-      <h1>📦 الأوردرات</h1>
-      <p>كل الطلبات اللي جاتلك من كل اللاندينج بيدجز بتاعتك</p>
+      <h1 id="pageHeading">📦 الأوردرات</h1>
+      <p id="pageSubheading">كل الطلبات اللي جاتلك من كل اللاندينج بيدجز بتاعتك</p>
     </div>
   </div>
+
+  <div id="filterBanner" style="display:none;"></div>
 
   <div class="stats-row">
     <div class="stat-box"><div class="num" id="totalCount">0</div><div class="lbl">إجمالي الأوردرات</div></div>
@@ -119,6 +129,8 @@ td.checkbox-cell input { width: 16px; height: 16px; cursor: pointer; }
 
   let currentUserId = null;
   let allOrders = [];
+  const urlParams = new URLSearchParams(window.location.search);
+  const filterPageId = urlParams.get('page_id');
 
   async function loadOrders() {
     const { data: { session } } = await _supabase.auth.getSession();
@@ -128,17 +140,33 @@ td.checkbox-cell input { width: 16px; height: 16px; cursor: pointer; }
     }
     currentUserId = session.user.id;
 
-    const { data: orders, error } = await _supabase
+    let query = _supabase
       .from('orders')
       .select('*, user_pages(page_title)')
       .eq('user_id', currentUserId)
       .order('created_at', { ascending: false });
+
+    if (filterPageId) {
+      query = query.eq('page_id', filterPageId);
+    }
+
+    const { data: orders, error } = await query;
 
     const contentArea = document.getElementById('contentArea');
 
     if (error) {
       contentArea.innerHTML = '<div class="loading">حصل خطأ: ' + error.message + '</div>';
       return;
+    }
+
+    if (filterPageId) {
+      const pageTitle = orders.length > 0 && orders[0].user_pages ? orders[0].user_pages.page_title : null;
+      document.getElementById('pageHeading').innerText = '📦 أوردرات: ' + (pageTitle || 'اللاندينج المحددة');
+      document.getElementById('pageSubheading').innerText = 'الطلبات الخاصة باللاندينج بيدج دي بس';
+
+      const banner = document.getElementById('filterBanner');
+      banner.style.display = 'block';
+      banner.innerHTML = `<div class="filter-banner">🔍 بتشوف أوردرات لاندينج واحدة بس <a href="orders.html">عرض كل الأوردرات</a></div>`;
     }
 
     allOrders = orders || [];
