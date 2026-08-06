@@ -91,6 +91,17 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
 .card .view-live { font-size: 12px; color: var(--muted); text-decoration: none; border-bottom: 1px dashed var(--muted); }
 .card .view-live:hover { color: var(--gold3); border-color: var(--gold3); }
 
+/* شارة عدد الأوردرات */
+.orders-badge {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.3);
+  border-radius: 14px; padding: 10px 12px; margin-bottom: 14px;
+}
+.orders-badge.zero { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08); }
+.orders-badge .orders-num { font-size: 30px; font-weight: 900; color: #4ADE80; line-height: 1; }
+.orders-badge.zero .orders-num { color: var(--muted); }
+.orders-badge .orders-label { font-size: 11px; color: var(--muted); font-weight: 700; text-align: right; line-height: 1.4; }
+
 /* حالة عدم وجود لاندينجز */
 .empty-state {
   text-align: center; padding: 60px 20px; color: var(--muted);
@@ -127,8 +138,15 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
   </div>
 
   <div class="stats-box">
-    <div class="num" id="pagesCount">0</div>
-    <div class="label">لاندينج بيدج تم إنشاؤها</div>
+    <div>
+      <div class="num" id="pagesCount">0</div>
+      <div class="label">لاندينج بيدج تم إنشاؤها</div>
+    </div>
+    <div style="width:1px; align-self:stretch; background: rgba(184,137,42,0.25);"></div>
+    <div>
+      <div class="num" id="totalOrdersCount" style="color:#4ADE80;">0</div>
+      <div class="label">إجمالي الأوردرات المستلمة 🔥</div>
+    </div>
   </div>
 
   <div id="contentArea">
@@ -184,6 +202,27 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
 
     document.getElementById('pagesCount').innerText = pages.length;
 
+    // هات عدد الأوردرات لكل صفحة في استعلام واحد
+    const pageIds = pages.map(p => p.id);
+    let ordersCountMap = {};
+    let totalOrders = 0;
+
+    if (pageIds.length > 0) {
+      const { data: ordersData, error: ordersError } = await _supabase
+        .from('orders')
+        .select('page_id')
+        .in('page_id', pageIds);
+
+      if (!ordersError && ordersData) {
+        ordersData.forEach(o => {
+          ordersCountMap[o.page_id] = (ordersCountMap[o.page_id] || 0) + 1;
+        });
+        totalOrders = ordersData.length;
+      }
+    }
+
+    document.getElementById('totalOrdersCount').innerText = totalOrders;
+
     if (pages.length === 0) {
       contentArea.innerHTML = `
         <div class="empty-state">
@@ -215,6 +254,17 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
 
       const thumbHtml = thumbUrl ? `<img class="card-thumb" src="${thumbUrl}" alt="">` : '';
 
+      const ordersCount = ordersCountMap[page.id] || 0;
+      const ordersBadgeHtml = ordersCount > 0
+        ? `<div class="orders-badge">
+             <span class="orders-num">${ordersCount}</span>
+             <span class="orders-label">${ordersCount === 1 ? 'أوردر وصلك' : 'أوردر وصلك'} من الصفحة دي 🎉</span>
+           </div>`
+        : `<div class="orders-badge zero">
+             <span class="orders-num">0</span>
+             <span class="orders-label">لسه معملتش أوردرات من الصفحة دي</span>
+           </div>`;
+
       card.innerHTML = `
         ${thumbHtml}
         <div class="tag">
@@ -222,6 +272,7 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
           <span class="status-badge ${page.is_published ? 'live' : 'draft'}">${page.is_published ? '🟢 منشورة' : '📝 مسودة'}</span>
         </div>
         <h3>${escapeHtml(page.page_title || 'بدون عنوان')}</h3>
+        ${ordersBadgeHtml}
         <div class="price">💰 ${escapeHtml(page.product_price || '-')} جنيه</div>
         <div class="whatsapp">📱 ${escapeHtml(page.whatsapp_number || '-')}</div>
         <div class="card-actions">
