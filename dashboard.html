@@ -36,6 +36,8 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
 .btn-logout:hover { background: #b91c1c; }
 .btn-orders { background: rgba(184,137,42,0.15); color: var(--gold2); border: 1px solid rgba(184,137,42,0.4); padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: 700; font-family: 'Tajawal'; font-size: 13px; }
 .btn-orders:hover { background: rgba(184,137,42,0.25); }
+.btn-profit { background: rgba(74,222,128,0.15); color: #4ADE80; border: 1px solid rgba(74,222,128,0.4); padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: 700; font-family: 'Tajawal'; font-size: 13px; }
+.btn-profit:hover { background: rgba(74,222,128,0.25); }
 
 /* المحتوى */
 .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
@@ -110,6 +112,7 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
 <div class="top-bar">
   <div class="brand">⚡ PageKit PRO</div>
   <div class="user-info">
+    <button class="btn-profit" onclick="window.location.href='profit.html'">💰 احسب أرباحك</button>
     <button class="btn-orders" onclick="window.location.href='orders.html'">📦 الأوردرات</button>
     <span id="userEmailDisplay"></span>
     <button class="btn-logout" onclick="signOut()">تسجيل خروج</button>
