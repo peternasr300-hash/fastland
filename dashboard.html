@@ -56,13 +56,16 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
 }
 .btn-create:hover { transform: translateY(-2px); }
 
-/* عداد اللاندينجز */
+/* عداد اللاندينجز والأوردرات */
+.stats-row { display: flex; gap: 16px; margin-bottom: 30px; flex-wrap: wrap; }
 .stats-box {
   background: #150d22; border: 2px solid rgba(184,137,42,0.3); border-radius: 20px;
-  padding: 22px 28px; margin-bottom: 30px; display: flex; align-items: center; gap: 18px;
+  padding: 22px 26px; display: flex; align-items: center; gap: 16px; flex: 1; min-width: 220px;
 }
-.stats-box .num { font-size: 40px; font-weight: 900; color: var(--gold2); line-height: 1; }
-.stats-box .label { color: var(--muted); font-size: 14px; }
+.stats-box .num { font-size: 36px; font-weight: 900; color: var(--gold2); line-height: 1; }
+.stats-box .label { color: var(--muted); font-size: 13px; }
+.stats-box.orders-today .num { color: #4ADE80; }
+.stats-box.orders-total .num { color: var(--gold3); }
 
 /* الكروت */
 .cards-grid {
@@ -86,6 +89,9 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
 .card .edit-hint { font-size: 12px; color: var(--gold2); font-weight: 700; }
 .card .view-live { font-size: 12px; color: var(--muted); text-decoration: none; border-bottom: 1px dashed var(--muted); }
 .card .view-live:hover { color: var(--gold3); border-color: var(--gold3); }
+.card .view-orders { font-size: 12px; color: var(--gold2); text-decoration: none; font-weight: 700; }
+.card .view-orders:hover { color: var(--gold3); }
+.card .card-actions-row2 { display: flex; justify-content: flex-end; margin-top: 8px; }
 
 /* حالة عدم وجود لاندينجز */
 .empty-state {
@@ -119,9 +125,19 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
     <button class="btn-create" onclick="goCreateNew()">➕ إنشاء لاندينج بيدج جديدة</button>
   </div>
 
-  <div class="stats-box">
-    <div class="num" id="pagesCount">0</div>
-    <div class="label">لاندينج بيدج تم إنشاؤها</div>
+  <div class="stats-row">
+    <div class="stats-box">
+      <div class="num" id="pagesCount">0</div>
+      <div class="label">لاندينج بيدج تم إنشاؤها</div>
+    </div>
+    <div class="stats-box orders-today">
+      <div class="num" id="todayOrdersCount">0</div>
+      <div class="label">أوردرات النهاردة</div>
+    </div>
+    <div class="stats-box orders-total">
+      <div class="num" id="totalOrdersCount">0</div>
+      <div class="label">إجمالي الأوردرات</div>
+    </div>
   </div>
 
   <div id="contentArea">
@@ -177,6 +193,24 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
 
     document.getElementById('pagesCount').innerText = pages.length;
 
+    // إحصائيات الأوردرات
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const { count: todayCount } = await _supabase
+      .from('orders')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', session.user.id)
+      .gte('created_at', startOfDay.toISOString());
+
+    const { count: totalCount } = await _supabase
+      .from('orders')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', session.user.id);
+
+    document.getElementById('todayOrdersCount').innerText = todayCount || 0;
+    document.getElementById('totalOrdersCount').innerText = totalCount || 0;
+
     if (pages.length === 0) {
       contentArea.innerHTML = `
         <div class="empty-state">
@@ -218,6 +252,9 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
         <div class="card-actions">
           <span class="edit-hint">اضغط للتعديل ←</span>
           ${liveLinkHtml}
+        </div>
+        <div class="card-actions-row2">
+          <a class="view-orders" href="orders.html?page_id=${page.id}" onclick="event.stopPropagation()">📦 أوردرات اللاند دي</a>
         </div>
       `;
       grid.appendChild(card);
