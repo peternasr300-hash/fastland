@@ -39,8 +39,18 @@ body {
   display: inline-block; background: color-mix(in srgb, var(--accent) 18%, transparent);
   border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
   color: var(--accent2); padding: 6px 18px; border-radius: 30px; font-size: 12px; font-weight: 700; margin-bottom: 20px;
+  animation: badgePulse 2.2s ease-in-out infinite;
+}
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 35%, transparent); }
+  50% { box-shadow: 0 0 0 8px color-mix(in srgb, var(--accent) 0%, transparent); }
 }
 .hero h1 { font-size: 32px; line-height: 1.4; margin-bottom: 14px; font-weight: 900; }
+.hook-line {
+  font-size: 15px; color: var(--accent2); font-weight: 700; margin: -4px 0 18px; line-height: 1.6;
+  opacity: 0; animation: hookFadeIn 0.7s ease-out 0.15s forwards;
+}
+@keyframes hookFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
 .rating-row { display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom: 18px; font-size: 13px; color: var(--muted); }
 .rating-row .stars { color: var(--accent2); letter-spacing: 2px; }
@@ -225,8 +235,9 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
 
 <div id="pageContent" style="display:none;">
   <div class="hero">
-    <div class="badge">🔥 عرض محدود</div>
+    <div class="badge" id="outBadge">🔥 عرض محدود</div>
     <h1 id="outTitle">اسم المنتج</h1>
+    <p class="hook-line" id="outHook" style="display:none;"></p>
     <div class="rating-row">
       <span class="stars">★★★★★</span>
       <span>4.9 (312 تقييم)</span>
@@ -275,7 +286,7 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
         <span>💳 دفع عند الاستلام</span>
       </div>
 
-      <div class="social-proof">🔥 23 شخص طلبوا المنتج ده خلال الـ 24 ساعة اللي فاتت</div>
+      <div class="social-proof" id="outSocial">🔥 23 شخص طلبوا المنتج ده خلال الـ 24 ساعة اللي فاتت</div>
     </div>
   </div>
 
@@ -369,7 +380,7 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
   let pageState = { pageId: null, ownerUserId: null, title: '', price: '', whatsapp: '', isPreview: true };
 
   function renderPage(data) {
-    const { title, description, price, whatsapp, color, style, images } = data;
+    const { title, description, price, whatsapp, color, style, images, badge, hook, social } = data;
 
     applyTheme(color, style);
 
@@ -381,6 +392,20 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
       const descEl = document.getElementById('outDescription');
       descEl.innerText = description;
       descEl.style.display = 'block';
+    }
+
+    if (badge) {
+      document.getElementById('outBadge').innerText = badge;
+    }
+
+    if (hook) {
+      const hookEl = document.getElementById('outHook');
+      hookEl.innerText = hook;
+      hookEl.style.display = 'block';
+    }
+
+    if (social) {
+      document.getElementById('outSocial').innerText = social;
     }
 
     setupGallery(images);
@@ -498,7 +523,10 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
         whatsapp: data.whatsapp_number,
         color: data.theme_color,
         style: data.theme_style,
-        images: images
+        images: images,
+        badge: data.badge_text,
+        hook: data.hook_line,
+        social: data.social_proof_text
       });
     } else {
       // ===== وضع المعاينة: هات البيانات من رابط الصفحة نفسه =====
@@ -515,7 +543,10 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
         whatsapp: params.get('whatsapp') || '',
         color: params.get('color') || 'gold',
         style: params.get('style') || 'modern',
-        images: images
+        images: images,
+        badge: params.get('badge') || '',
+        hook: params.get('hook') || '',
+        social: params.get('social') || ''
       });
     }
   }
