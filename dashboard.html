@@ -34,6 +34,8 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
 #userEmailDisplay { color: var(--gold2); font-weight: 700; }
 .btn-logout { background: #dc2626; color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: bold; font-family: 'Tajawal'; font-size: 13px; }
 .btn-logout:hover { background: #b91c1c; }
+.btn-orders { background: rgba(184,137,42,0.15); color: var(--gold2); border: 1px solid rgba(184,137,42,0.4); padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: 700; font-family: 'Tajawal'; font-size: 13px; }
+.btn-orders:hover { background: rgba(184,137,42,0.25); }
 
 /* المحتوى */
 .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
@@ -53,12 +55,6 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
   white-space: nowrap; font-family: 'Tajawal';
 }
 .btn-create:hover { transform: translateY(-2px); }
-
-.btn-orders-all {
-  display: inline-flex; align-items: center; gap: 6px; color: var(--gold2); font-weight: 700; font-size: 13px;
-  text-decoration: none; border-bottom: 1px dashed var(--gold2); padding-bottom: 2px;
-}
-.btn-orders-all:hover { color: var(--gold3); border-color: var(--gold3); }
 
 /* عداد اللاندينجز */
 .stats-box {
@@ -91,17 +87,6 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
 .card .view-live { font-size: 12px; color: var(--muted); text-decoration: none; border-bottom: 1px dashed var(--muted); }
 .card .view-live:hover { color: var(--gold3); border-color: var(--gold3); }
 
-/* شارة عدد الأوردرات */
-.orders-badge {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.3);
-  border-radius: 14px; padding: 10px 12px; margin-bottom: 14px;
-}
-.orders-badge.zero { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08); }
-.orders-badge .orders-num { font-size: 30px; font-weight: 900; color: #4ADE80; line-height: 1; }
-.orders-badge.zero .orders-num { color: var(--muted); }
-.orders-badge .orders-label { font-size: 11px; color: var(--muted); font-weight: 700; text-align: right; line-height: 1.4; }
-
 /* حالة عدم وجود لاندينجز */
 .empty-state {
   text-align: center; padding: 60px 20px; color: var(--muted);
@@ -119,6 +104,7 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
 <div class="top-bar">
   <div class="brand">⚡ PageKit PRO</div>
   <div class="user-info">
+    <button class="btn-orders" onclick="window.location.href='orders.html'">📦 الأوردرات</button>
     <span id="userEmailDisplay"></span>
     <button class="btn-logout" onclick="signOut()">تسجيل خروج</button>
   </div>
@@ -133,20 +119,9 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
     <button class="btn-create" onclick="goCreateNew()">➕ إنشاء لاندينج بيدج جديدة</button>
   </div>
 
-  <div class="welcome-row" style="margin-bottom: 8px;">
-    <a class="btn-orders-all" href="orders.html">📋 كل الأوردرات</a>
-  </div>
-
   <div class="stats-box">
-    <div>
-      <div class="num" id="pagesCount">0</div>
-      <div class="label">لاندينج بيدج تم إنشاؤها</div>
-    </div>
-    <div style="width:1px; align-self:stretch; background: rgba(184,137,42,0.25);"></div>
-    <div>
-      <div class="num" id="totalOrdersCount" style="color:#4ADE80;">0</div>
-      <div class="label">إجمالي الأوردرات المستلمة 🔥</div>
-    </div>
+    <div class="num" id="pagesCount">0</div>
+    <div class="label">لاندينج بيدج تم إنشاؤها</div>
   </div>
 
   <div id="contentArea">
@@ -202,27 +177,6 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
 
     document.getElementById('pagesCount').innerText = pages.length;
 
-    // هات عدد الأوردرات لكل صفحة في استعلام واحد
-    const pageIds = pages.map(p => p.id);
-    let ordersCountMap = {};
-    let totalOrders = 0;
-
-    if (pageIds.length > 0) {
-      const { data: ordersData, error: ordersError } = await _supabase
-        .from('orders')
-        .select('page_id')
-        .in('page_id', pageIds);
-
-      if (!ordersError && ordersData) {
-        ordersData.forEach(o => {
-          ordersCountMap[o.page_id] = (ordersCountMap[o.page_id] || 0) + 1;
-        });
-        totalOrders = ordersData.length;
-      }
-    }
-
-    document.getElementById('totalOrdersCount').innerText = totalOrders;
-
     if (pages.length === 0) {
       contentArea.innerHTML = `
         <div class="empty-state">
@@ -244,8 +198,6 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
         ? `<a class="view-live" href="landing.html?id=${page.id}" target="_blank" onclick="event.stopPropagation()">👁️ اللينك الحقيقي</a>`
         : `<span class="view-live" style="opacity:0.5; border-color:transparent;">لسه مسودة</span>`;
 
-      const ordersLinkHtml = `<a class="view-live" href="orders.html?page_id=${page.id}" onclick="event.stopPropagation()">📋 الأوردرات</a>`;
-
       let thumbUrl = null;
       try {
         const imgs = page.images ? JSON.parse(page.images) : [];
@@ -254,17 +206,6 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
 
       const thumbHtml = thumbUrl ? `<img class="card-thumb" src="${thumbUrl}" alt="">` : '';
 
-      const ordersCount = ordersCountMap[page.id] || 0;
-      const ordersBadgeHtml = ordersCount > 0
-        ? `<div class="orders-badge">
-             <span class="orders-num">${ordersCount}</span>
-             <span class="orders-label">${ordersCount === 1 ? 'أوردر وصلك' : 'أوردر وصلك'} من الصفحة دي 🎉</span>
-           </div>`
-        : `<div class="orders-badge zero">
-             <span class="orders-num">0</span>
-             <span class="orders-label">لسه معملتش أوردرات من الصفحة دي</span>
-           </div>`;
-
       card.innerHTML = `
         ${thumbHtml}
         <div class="tag">
@@ -272,15 +213,11 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
           <span class="status-badge ${page.is_published ? 'live' : 'draft'}">${page.is_published ? '🟢 منشورة' : '📝 مسودة'}</span>
         </div>
         <h3>${escapeHtml(page.page_title || 'بدون عنوان')}</h3>
-        ${ordersBadgeHtml}
         <div class="price">💰 ${escapeHtml(page.product_price || '-')} جنيه</div>
         <div class="whatsapp">📱 ${escapeHtml(page.whatsapp_number || '-')}</div>
         <div class="card-actions">
           <span class="edit-hint">اضغط للتعديل ←</span>
           ${liveLinkHtml}
-        </div>
-        <div class="card-actions" style="margin-top: 8px;">
-          ${ordersLinkHtml}
         </div>
       `;
       grid.appendChild(card);

@@ -132,37 +132,39 @@ footer { text-align: center; padding: 24px; color: var(--muted); font-size: 11px
 }
 .floating-cta svg { width: 19px; height: 19px; fill: #fff; }
 
-/* ============ ORDER FORM ============ */
-.order-section {
-  max-width: 480px; margin: 0 auto 24px; padding: 0 20px;
+/* ============ مودال تأكيد الطلب ============ */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+  z-index: 2000; align-items: center; justify-content: center; padding: 20px;
+  backdrop-filter: blur(4px);
 }
-.order-box {
-  background: linear-gradient(160deg, #17110d, #0d0a08);
-  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
-  border-radius: 26px; padding: 30px 26px;
-  box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+.modal-overlay.active { display: flex; }
+.modal-box {
+  background: #150d0a; border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  border-radius: 22px; padding: 28px; max-width: 380px; width: 100%;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.6);
 }
-.order-box h3 { font-size: 18px; font-weight: 900; color: var(--accent2); margin-bottom: 4px; text-align: center; }
-.order-box .sub { text-align: center; color: var(--muted); font-size: 12px; margin-bottom: 22px; }
-.order-f-group { margin-bottom: 14px; }
-.order-f-group label { display: block; font-size: 12px; font-weight: 700; color: var(--accent2); margin-bottom: 6px; }
-.order-f-group input, .order-f-group textarea {
+.modal-box h3 { font-size: 18px; font-weight: 900; margin-bottom: 6px; text-align: center; }
+.modal-sub { color: var(--muted); font-size: 12px; text-align: center; margin-bottom: 20px; }
+.modal-box .f-group { margin-bottom: 14px; }
+.modal-box .f-group label { display:block; font-size: 12px; color: var(--accent2); font-weight: 700; margin-bottom: 6px; }
+.modal-box .f-group input {
   width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
   border-radius: 10px; color: #fff; font-family: 'Tajawal'; font-size: 14px; outline: none;
 }
-.order-f-group input:focus, .order-f-group textarea:focus { border-color: var(--accent2); }
-.order-f-group textarea { min-height: 70px; resize: vertical; }
-.btn-order-confirm {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  width: 100%; background: linear-gradient(135deg, #25D366, #1ebc59); color: #fff; font-weight: 900;
-  padding: 17px; border-radius: 40px; border: none; cursor: pointer; font-size: 16px; font-family: 'Tajawal';
-  box-shadow: 0 12px 30px rgba(37,211,102,0.35); transition: 0.2s; margin-top: 6px;
+.modal-box .f-group input:focus { border-color: var(--accent2); }
+.modal-actions { display: flex; gap: 8px; margin-top: 18px; }
+.btn-modal-cancel {
+  flex: 1; padding: 12px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.15);
+  background: transparent; color: var(--muted); font-family: 'Tajawal'; font-size: 13px; cursor: pointer;
 }
-.btn-order-confirm:hover { transform: translateY(-2px); }
-.btn-order-confirm:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-.order-msg { text-align: center; font-size: 12px; margin-top: 12px; min-height: 16px; }
-.order-msg.err { color: #F87171; }
-.order-msg.ok { color: #4ADE80; }
+.btn-modal-confirm {
+  flex: 2; padding: 12px; border-radius: 30px; border: none;
+  background: linear-gradient(135deg, #25D366, #1ebc59); color: #fff; font-weight: 900;
+  font-family: 'Tajawal'; font-size: 13px; cursor: pointer;
+}
+.btn-modal-confirm:disabled { opacity: 0.6; cursor: not-allowed; }
+.modal-msg { text-align: center; font-size: 12px; margin-top: 10px; color: var(--rose, #C4526B); min-height: 16px; }
 
 /* ============ ستايل: كلاسيك ============ */
 body.style-classic .hero h1,
@@ -234,10 +236,10 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
       </div>
       <p class="price-note">شامل الضريبة - السعر شامل التوصيل لحد باب البيت</p>
 
-      <a href="#orderSection" id="whatsappCta" class="cta-btn">
+      <button type="button" id="whatsappCta" class="cta-btn" onclick="openOrderModal()">
         <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2C6.486 2 2 6.486 2 12.004c0 1.99.586 3.85 1.594 5.406L2 22l4.723-1.567A9.945 9.945 0 0 0 12.004 22C17.522 22 22 17.522 22 12.004 22 6.486 17.522 2 12.004 2zm0 18.09c-1.66 0-3.203-.485-4.503-1.323l-.322-.193-2.803.93.943-2.73-.21-.33A8.075 8.075 0 0 1 3.91 12.004c0-4.464 3.63-8.094 8.094-8.094 4.464 0 8.094 3.63 8.094 8.094 0 4.464-3.63 8.086-8.094 8.086z"/></svg>
-        <span>اطلب الآن</span>
-      </a>
+        <span>اطلب الآن عبر واتساب</span>
+      </button>
 
       <div class="trust-row">
         <span>✅ ضمان استرجاع</span>
@@ -246,37 +248,6 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
       </div>
 
       <div class="social-proof">🔥 23 شخص طلبوا المنتج ده خلال الـ 24 ساعة اللي فاتت</div>
-    </div>
-  </div>
-
-  <div class="order-section" id="orderSection">
-    <div class="order-box">
-      <h3>🛍️ إتمام الطلب</h3>
-      <p class="sub">اكتب بياناتك وهنكلمك على واتساب لتأكيد الطلب</p>
-
-      <div class="order-f-group">
-        <label>الاسم بالكامل *</label>
-        <input type="text" id="orderName" placeholder="مثال: أحمد محمد">
-      </div>
-      <div class="order-f-group">
-        <label>رقم الموبايل *</label>
-        <input type="tel" id="orderPhone" placeholder="مثال: 01000000000">
-      </div>
-      <div class="order-f-group">
-        <label>العنوان بالتفصيل (المحافظة - المنطقة) *</label>
-        <textarea id="orderAddress" placeholder="مثال: القاهرة - مدينة نصر - شارع..."></textarea>
-      </div>
-      <div class="order-f-group">
-        <label>ملاحظات (اختياري)</label>
-        <input type="text" id="orderNotes" placeholder="أي تفاصيل إضافية">
-      </div>
-
-      <button class="btn-order-confirm" id="btnOrderConfirm" onclick="submitOrder()">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2C6.486 2 2 6.486 2 12.004c0 1.99.586 3.85 1.594 5.406L2 22l4.723-1.567A9.945 9.945 0 0 0 12.004 22C17.522 22 22 17.522 22 12.004 22 6.486 17.522 2 12.004 2zm0 18.09c-1.66 0-3.203-.485-4.503-1.323l-.322-.193-2.803.93.943-2.73-.21-.33A8.075 8.075 0 0 1 3.91 12.004c0-4.464 3.63-8.094 8.094-8.094 4.464 0 8.094 3.63 8.094 8.094 0 4.464-3.63 8.086-8.094 8.086z"/></svg>
-        <span>تأكيد الطلب وفتح واتساب</span>
-      </button>
-
-      <div class="order-msg" id="orderMsg"></div>
     </div>
   </div>
 
@@ -289,10 +260,33 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
   <footer>Powered by PageKit PRO</footer>
 </div>
 
-<a href="#orderSection" id="floatingCta" class="floating-cta">
+<button type="button" id="floatingCta" class="floating-cta" onclick="openOrderModal()">
   <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2C6.486 2 2 6.486 2 12.004c0 1.99.586 3.85 1.594 5.406L2 22l4.723-1.567A9.945 9.945 0 0 0 12.004 22C17.522 22 22 17.522 22 12.004 22 6.486 17.522 2 12.004 2zm0 18.09c-1.66 0-3.203-.485-4.503-1.323l-.322-.193-2.803.93.943-2.73-.21-.33A8.075 8.075 0 0 1 3.91 12.004c0-4.464 3.63-8.094 8.094-8.094 4.464 0 8.094 3.63 8.094 8.094 0 4.464-3.63 8.086-8.094 8.086z"/></svg>
   <span>اطلب الآن</span>
-</a>
+</button>
+
+<!-- ===== فورم تأكيد الطلب ===== -->
+<div id="orderModalOverlay" class="modal-overlay">
+  <div class="modal-box">
+    <h3>📦 أكمل بيانات الطلب</h3>
+    <p class="modal-sub">هنبعتها لصاحب المتجر عشان يتواصل معاك على واتساب</p>
+
+    <div class="f-group">
+      <label>الاسم:</label>
+      <input type="text" id="orderName" placeholder="اسمك بالكامل">
+    </div>
+    <div class="f-group">
+      <label>رقم الموبايل:</label>
+      <input type="text" id="orderPhone" placeholder="01xxxxxxxxx">
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" class="btn-modal-cancel" onclick="closeOrderModal()">إلغاء</button>
+      <button type="button" class="btn-modal-confirm" id="btnConfirmOrder" onclick="confirmOrder()">تأكيد الطلب وفتح واتساب</button>
+    </div>
+    <div class="modal-msg" id="modalMsg"></div>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -310,9 +304,6 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
     purple: { a: '#7C3AED', a2: '#A78BFA' },
     red:    { a: '#DC2626', a2: '#F87171' },
   };
-
-  let currentPageId = null;
-  let pageInfo = { title: '', price: '', whatsapp: '' };
 
   function applyTheme(color, style) {
     const c = COLOR_MAP[color] || COLOR_MAP.gold;
@@ -361,10 +352,10 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
     }, 1000);
   }
 
+  let pageState = { pageId: null, ownerUserId: null, title: '', price: '', whatsapp: '', isPreview: true };
+
   function renderPage(data) {
     const { title, description, price, whatsapp, color, style, images } = data;
-
-    pageInfo = { title, price, whatsapp };
 
     applyTheme(color, style);
 
@@ -380,6 +371,10 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
 
     setupGallery(images);
 
+    pageState.title = title;
+    pageState.price = price;
+    pageState.whatsapp = whatsapp;
+
     document.getElementById('loadingScreen').style.display = 'none';
     document.getElementById('pageContent').style.display = 'block';
 
@@ -392,61 +387,64 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
     });
   }
 
-  async function submitOrder() {
+  function buildWaUrl(customerName) {
+    const cleanNumber = (pageState.whatsapp || '').replace(/[^0-9]/g, '');
+    let msg = 'أنا مهتم بمنتج: ' + pageState.title;
+    if (customerName) msg += ' - الاسم: ' + customerName;
+    return 'https://wa.me/' + cleanNumber + '?text=' + encodeURIComponent(msg);
+  }
+
+  function openOrderModal() {
+    if (pageState.isPreview) {
+      // في وضع المعاينة مفيش تسجيل أوردر حقيقي، افتح واتساب على طول
+      window.open(buildWaUrl(''), '_blank');
+      return;
+    }
+    document.getElementById('modalMsg').innerText = '';
+    document.getElementById('orderName').value = '';
+    document.getElementById('orderPhone').value = '';
+    document.getElementById('orderModalOverlay').classList.add('active');
+  }
+
+  function closeOrderModal() {
+    document.getElementById('orderModalOverlay').classList.remove('active');
+  }
+
+  async function confirmOrder() {
     const name = document.getElementById('orderName').value.trim();
     const phone = document.getElementById('orderPhone').value.trim();
-    const address = document.getElementById('orderAddress').value.trim();
-    const notes = document.getElementById('orderNotes').value.trim();
-    const msgEl = document.getElementById('orderMsg');
+    const modalMsg = document.getElementById('modalMsg');
 
-    if (!name || !phone || !address) {
-      msgEl.innerText = 'من فضلك املأ الاسم ورقم الموبايل والعنوان';
-      msgEl.className = 'order-msg err';
+    if (!name || !phone) {
+      modalMsg.innerText = 'من فضلك اكتب الاسم ورقم الموبايل';
       return;
     }
 
-    const phoneDigits = phone.replace(/[^0-9]/g, '');
-    if (phoneDigits.length < 10) {
-      msgEl.innerText = 'رقم الموبايل مش صحيح';
-      msgEl.className = 'order-msg err';
-      return;
-    }
-
-    const btn = document.getElementById('btnOrderConfirm');
+    const btn = document.getElementById('btnConfirmOrder');
     btn.disabled = true;
-    msgEl.innerText = 'جاري تسجيل الطلب...';
-    msgEl.className = 'order-msg';
+    modalMsg.style.color = '';
+    modalMsg.innerText = 'جاري تسجيل الطلب...';
 
-    try {
-      await _supabase.from('orders').insert({
-        page_id: currentPageId,
-        product_title: pageInfo.title,
-        product_price: pageInfo.price,
+    const { error } = await _supabase
+      .from('orders')
+      .insert({
+        page_id: pageState.pageId,
+        user_id: pageState.ownerUserId,
         customer_name: name,
-        customer_phone: phoneDigits,
-        customer_address: address,
-        notes: notes || null
+        customer_phone: phone,
+        product_title: pageState.title,
+        product_price: pageState.price
       });
-    } catch (e) {
-      // حتى لو حفظ الطلب في قاعدة البيانات فشل، نكمل نفتح واتساب عشان معندناش نخسر أوردر
-      console.error('Order save failed:', e);
-    }
-
-    const cleanNumber = (pageInfo.whatsapp || '').replace(/[^0-9]/g, '');
-    const waText =
-      'طلب جديد من صفحة: ' + pageInfo.title + '\n' +
-      'الاسم: ' + name + '\n' +
-      'رقم الموبايل: ' + phoneDigits + '\n' +
-      'العنوان: ' + address + '\n' +
-      (notes ? 'ملاحظات: ' + notes + '\n' : '') +
-      'السعر: ' + pageInfo.price + ' جنيه';
-    const waUrl = 'https://wa.me/' + cleanNumber + '?text=' + encodeURIComponent(waText);
 
     btn.disabled = false;
-    msgEl.innerText = 'تم تسجيل طلبك! هيتفتحلك واتساب دلوقتي...';
-    msgEl.className = 'order-msg ok';
 
-    window.open(waUrl, '_blank');
+    // حتى لو حصل خطأ في التسجيل، نكمل نفتح واتساب عشان العميل مايتأخرش
+    if (error) {
+      console.error(error);
+    }
+
+    closeOrderModal();
+    window.open(buildWaUrl(name), '_blank');
   }
 
   async function init() {
@@ -466,10 +464,12 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
         return;
       }
 
-      currentPageId = data.id;
-
       let images = [];
       try { images = data.images ? JSON.parse(data.images) : []; } catch (e) {}
+
+      pageState.pageId = data.id;
+      pageState.ownerUserId = data.user_id;
+      pageState.isPreview = false;
 
       renderPage({
         title: data.page_title,
@@ -483,6 +483,7 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
     } else {
       // ===== وضع المعاينة: هات البيانات من رابط الصفحة نفسه =====
       document.getElementById('previewBar').style.display = 'block';
+      pageState.isPreview = true;
 
       let images = [];
       try { images = params.get('images') ? JSON.parse(params.get('images')) : []; } catch (e) {}
