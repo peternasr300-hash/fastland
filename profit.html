@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>احسب أرباحك - PageKit PRO</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap');
+
+:root {
+  --gold: #B8892A;
+  --gold2: #E4B84A;
+  --gold3: #F5D97A;
+  --black: #0A0A0A;
+  --rose: #C4526B;
+  --green: #4ADE80;
+  --white: #FFFFFF;
+  --muted: #8A7A6A;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--white); min-height: 100vh; }
+
+.top-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 18px 30px; background: rgba(20,10,30,0.9); backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(184,137,42,0.25); flex-wrap: wrap; gap: 12px; position: sticky; top: 0; z-index: 50;
+}
+.top-bar .brand { font-weight: 900; color: var(--gold2); font-size: 18px; }
+.btn-back {
+  background: rgba(255,255,255,0.08); color: var(--white); border: 1px solid rgba(255,255,255,0.15);
+  padding: 8px 18px; border-radius: 20px; cursor: pointer; font-family: 'Tajawal'; font-size: 13px;
+}
+.btn-back:hover { background: rgba(255,255,255,0.15); }
+
+.container { max-width: 640px; margin: 0 auto; padding: 40px 20px 80px; }
+
+.page-header { text-align: center; margin-bottom: 30px; }
+.page-header h1 { font-size: 24px; font-weight: 900; color: var(--gold2); margin-bottom: 8px; }
+.page-header p { color: var(--muted); font-size: 13px; }
+
+.calc-box { background: #150d22; border: 2px solid rgba(184,137,42,0.3); border-radius: 24px; padding: 32px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+
+.section-title { font-size: 13px; font-weight: 900; color: var(--gold3); margin: 26px 0 14px; }
+.section-title:first-child { margin-top: 0; }
+
+.f-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.f-row label { font-size: 14px; color: var(--white); display: flex; align-items: center; gap: 8px; flex: 1; }
+.f-row input {
+  width: 130px; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px; color: #fff; font-family: 'Tajawal'; font-size: 14px; outline: none; text-align: center;
+}
+.f-row input:focus { border-color: var(--gold2); }
+
+.divider { height: 1px; background: rgba(255,255,255,0.08); margin: 20px 0; }
+
+.btn-calc {
+  width: 100%; background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #000; font-weight: 900;
+  padding: 16px; border-radius: 40px; border: none; cursor: pointer; font-size: 16px; margin-top: 10px;
+  box-shadow: 0 8px 25px rgba(184,137,42,0.4); font-family: 'Tajawal';
+}
+.btn-calc:hover { transform: translateY(-2px); }
+
+/* نتيجة الحساب */
+.result-box { margin-top: 26px; display: none; }
+.result-box.show { display: block; }
+.result-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; border-radius: 14px; margin-bottom: 10px; font-size: 14px; font-weight: 700;
+}
+.result-row.costs { background: rgba(196,82,107,0.12); border: 1px solid rgba(196,82,107,0.3); color: var(--rose); }
+.result-row.profit { background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.3); color: var(--green); font-size: 17px; padding: 18px 20px; }
+.result-row.profit.negative { background: rgba(196,82,107,0.15); border-color: rgba(196,82,107,0.4); color: var(--rose); }
+.result-row.margin { background: rgba(184,137,42,0.12); border: 1px solid rgba(184,137,42,0.3); color: var(--gold3); }
+.result-row .val { font-size: 18px; font-weight: 900; }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="brand">⚡ PageKit PRO</div>
+  <button class="btn-back" onclick="window.location.href='dashboard.html'">→ رجوع للوحة التحكم</button>
+</div>
+
+<div class="container">
+  <div class="page-header">
+    <h1>💰 احسب أرباحك</h1>
+    <p>اكتب أرقامك وهنطلعلك صافي الربح ونسبته بالظبط</p>
+  </div>
+
+  <div class="calc-box">
+    <div class="section-title">📥 المبيعات</div>
+    <div class="f-row">
+      <label>إجمالي مبيعات التسليمات</label>
+      <input type="number" id="totalSales" placeholder="0">
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-title">➖ التكاليف</div>
+    <div class="f-row"><label>🚚 شحن التسليمات</label><input type="number" id="shippingDelivered" placeholder="0"></div>
+    <div class="f-row"><label>↩️ شحن المرتجعات</label><input type="number" id="shippingReturns" placeholder="0"></div>
+    <div class="f-row"><label>📢 إعلانات</label><input type="number" id="ads" placeholder="0"></div>
+    <div class="f-row"><label>💵 إجمالي الرواتب</label><input type="number" id="salaries" placeholder="0"></div>
+    <div class="f-row"><label>🏠 الإيجار</label><input type="number" id="rent" placeholder="0"></div>
+    <div class="f-row"><label>🧾 نثريات</label><input type="number" id="misc" placeholder="0"></div>
+    <div class="f-row"><label>📦 تكلفة البضاعة</label><input type="number" id="cogs" placeholder="0"></div>
+
+    <button class="btn-calc" onclick="calculateProfit()">🧮 احسب الأرباح</button>
+
+    <div class="result-box" id="resultBox">
+      <div class="result-row costs">
+        <span>🔴 إجمالي التكاليف</span>
+        <span class="val" id="outTotalCosts">0</span>
+      </div>
+      <div class="result-row profit" id="profitRow">
+        <span id="profitLabel">✅ صافي الربح</span>
+        <span class="val" id="outNetProfit">0</span>
+      </div>
+      <div class="result-row margin">
+        <span>📊 نسبة الربح</span>
+        <span class="val" id="outMargin">0%</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function getVal(id) {
+    const v = parseFloat(document.getElementById(id).value);
+    return isNaN(v) ? 0 : v;
+  }
+
+  function calculateProfit() {
+    const totalSales = getVal('totalSales');
+    const costs = [
+      getVal('shippingDelivered'),
+      getVal('shippingReturns'),
+      getVal('ads'),
+      getVal('salaries'),
+      getVal('rent'),
+      getVal('misc'),
+      getVal('cogs'),
+    ];
+
+    const totalCosts = costs.reduce((a, b) => a + b, 0);
+    const netProfit = totalSales - totalCosts;
+    const margin = totalSales > 0 ? (netProfit / totalSales) * 100 : 0;
+
+    document.getElementById('outTotalCosts').innerText = totalCosts.toLocaleString('ar-EG') + ' ج.م';
+    document.getElementById('outNetProfit').innerText = netProfit.toLocaleString('ar-EG') + ' ج.م';
+    document.getElementById('outMargin').innerText = margin.toFixed(1) + '%';
+
+    const profitRow = document.getElementById('profitRow');
+    const profitLabel = document.getElementById('profitLabel');
+    if (netProfit < 0) {
+      profitRow.classList.add('negative');
+      profitLabel.innerText = '🔻 صافي الخسارة';
+    } else {
+      profitRow.classList.remove('negative');
+      profitLabel.innerText = '✅ صافي الربح';
+    }
+
+    document.getElementById('resultBox').classList.add('show');
+    document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+</script>
+
+</body>
+</html>
