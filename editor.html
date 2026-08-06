@@ -47,6 +47,23 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
 .f-group input:focus, .f-group textarea:focus { border-color: var(--gold2); }
 .f-group textarea { min-height: 90px; line-height: 1.7; }
 
+/* مولّد النصوص التسويقية */
+.ai-gen-box {
+  background: linear-gradient(135deg, rgba(184,137,42,0.12), rgba(196,82,107,0.08));
+  border: 1px solid rgba(184,137,42,0.35); border-radius: 16px; padding: 18px; margin-bottom: 18px; text-align: center;
+}
+.btn-ai-generate {
+  background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #000; font-weight: 900;
+  padding: 12px 22px; border-radius: 30px; border: none; cursor: pointer; font-size: 14px;
+  font-family: 'Tajawal'; display: inline-flex; align-items: center; gap: 8px;
+  box-shadow: 0 8px 20px rgba(184,137,42,0.35); transition: 0.2s;
+}
+.btn-ai-generate:hover { transform: translateY(-2px) scale(1.02); }
+.btn-ai-generate:active { transform: translateY(0) scale(0.98); }
+.btn-ai-generate .ai-ic { display: inline-block; animation: aiSparkle 1.8s ease-in-out infinite; }
+@keyframes aiSparkle { 0%, 100% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(15deg) scale(1.2); } }
+.ai-hint { color: var(--muted); font-size: 12px; margin-top: 10px; line-height: 1.6; }
+
 /* رفع الصور */
 .image-upload-zone {
   border: 2px dashed rgba(184,137,42,0.4); border-radius: 16px; padding: 24px; text-align: center;
@@ -160,6 +177,26 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
       <input type="text" id="inputNewPrice" placeholder="مثال: 625">
     </div>
 
+    <div class="section-label">📢 النصوص التسويقية (Hooks)</div>
+    <div class="ai-gen-box">
+      <button type="button" class="btn-ai-generate" id="btnAiGenerate" onclick="generateAICopy()">
+        <span class="ai-ic">✨</span> ولّد نصوص تسويقية بالذكاء الاصطناعي
+      </button>
+      <p class="ai-hint">هيحلل عنوان ووصف منتجك ويقترحلك باچ + هوك + سوشيال بروف مناسبين. تقدر تولّد أكتر من مرة وتعدّل زي ما تحب.</p>
+    </div>
+    <div class="f-group">
+      <label>🏷️ الباچ اللي فوق العنوان:</label>
+      <input type="text" id="inputBadgeText" placeholder="مثال: 🔥 عرض لفترة محدودة">
+    </div>
+    <div class="f-group">
+      <label>💥 جملة الهوك تحت العنوان:</label>
+      <input type="text" id="inputHookLine" placeholder="جملة قصيرة تشد الانتباه تحت اسم المنتج">
+    </div>
+    <div class="f-group">
+      <label>👥 جملة السوشيال بروف:</label>
+      <input type="text" id="inputSocialProof" placeholder="مثال: 🔥 23 شخص طلبوا المنتج ده خلال الـ24 ساعة اللي فاتت">
+    </div>
+
     <div class="section-label">🖼️ صور المنتج</div>
     <div class="f-group">
       <div class="image-upload-zone" onclick="document.getElementById('fileInput').click()">
@@ -238,6 +275,115 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
     { id: 'professional',  ic: '💼', name: 'احترافي',  desc: 'مرتب ونظيف، ثقة وهدوء' },
   ];
   let selectedStyle = 'modern';
+
+  // ===== بنك الهوكات والنصوص التسويقية =====
+  const HOOKS_BANK = {
+    fashion: {
+      keywords: ['فستان','عباية','تيشرت','تي شيرت','بنطلون','حذاء','شنطة','جاكيت','قميص','طرحة','اكسسوار','مجوهرات','خاتم','سلسلة','حجاب','بدلة','جلابية','كارديجان'],
+      badges: ['👗 موضة الموسم', '🔥 قطعة العيد', '✨ تصميم محدود ومميز', '🎯 الأكتر طلبًا هالأسبوع'],
+      hooks: ['لبسة توريك تعليق من كل اللي حواليكي', 'شياكة مش بتتقال… بتتلبس', 'قطعة هتضيفلك ثقة مش بس شكل', 'اختاري نفسك، اختاري تتميزي']
+    },
+    electronics: {
+      keywords: ['سماعة','سماعات','شاحن','موبايل','لابتوب','ساعة ذكية','كابل','باور بانك','كاميرا','ريموت','بلوتوث','شاشة','راوتر'],
+      badges: ['⚡ تكنولوجيا بتوفرلك وقتك', '🔋 أداء يفرق فعلاً', '🚀 الأحدث في فئته'],
+      hooks: ['بطارية تكفيك يومك من غير ما تقلق', 'جودة هتخليك تندم إنك اتأخرت تجربها', 'أداء بيتكلم عن نفسه من أول استخدام']
+    },
+    beauty: {
+      keywords: ['كريم','سيروم','مكياج','عطر','شامبو','بشرة','شعر','مرطب','ماسك','بودرة','روج','فاونديشن'],
+      badges: ['✨ سر جمالك الجديد', '🌿 مكونات فعالة ومختارة بعناية', '💫 نتيجة من أول أسبوع'],
+      hooks: ['بشرتك تستاهل اهتمام أكتر', 'نتيجة هتلاحظيها بنفسك قبل ما حد يقولك', 'جمالك يبدأ من روتين بسيط زي ده']
+    },
+    food: {
+      keywords: ['شوكولاتة','حلويات','مكسرات','عسل','قهوة','اكل','طعام','كيك','حلاوة','عصير','بسكويت'],
+      badges: ['😋 طعم مختلف فعلاً', '🎁 هدية بتفتح النفس', '🔥 الأكتر طلبًا للمناسبات'],
+      hooks: ['طعم بيرجعك طفل تاني', 'مذاق مش هتلاقيه في أي مكان تاني', 'كل قطعة حكاية طعم لوحدها']
+    },
+    home: {
+      keywords: ['فرن','مطبخ','ديكور','سجاد','اضاءة','إضاءة','منظف','بيت','اثاث','أثاث','مفروشات','ستائر'],
+      badges: ['🏠 بيتك يستاهل الأحسن', '✨ لمسة رقي جديدة', '🎯 عملي وشكله حلو'],
+      hooks: ['تفاصيل بسيطة بتفرق في شكل بيتك كله', 'منتج هيوفرلك وقت ومجهود يوميًا', 'بيتك يعكس ذوقك، ابدأ من هنا']
+    },
+    course: {
+      keywords: ['كورس','تدريب','استشارة','خدمة','دورة','ورشة','تعليم','محاضرة','برنامج تدريبي'],
+      badges: ['🎓 استثمر في نفسك', '📈 خطوة بتغيّر مسارك', '🔥 آخر فرصة للحجز'],
+      hooks: ['اللي بيستثمر في نفسه النهاردة، بيحصد بكرة', 'مهارة توريك تفتحلك أبواب مقفولة', 'تعلّم اللي يفرق فعلاً في شغلك']
+    },
+    kids: {
+      keywords: ['اطفال','أطفال','بيبي','رضيع','العاب','ألعاب','بيبيهات','حضانة','مواليد'],
+      badges: ['👶 راحة وأمان لطفلك', '🎈 لحظات سعادة تستاهلها', '✨ اختيار الأمهات الأول'],
+      hooks: ['راحة طفلك أول أولوية عندنا', 'منتج مصمم خصيصي لسلامة وراحة صغيرك', 'كل أم بتدور على الأفضل لطفلها']
+    },
+    general: {
+      keywords: [],
+      badges: ['🔥 عرض لفترة محدودة', '⚡ الأكتر مبيعًا الأسبوع ده', '✨ اختيار أكتر من 1000 عميل', '🎯 الأفضل في فئته', '🚀 عرض حصري النهاردة بس'],
+      hooks: ['كل يوم بيتأخر فيه قرارك… حد تاني بياخد الفرصة قبلك', 'جربه مرة واحدة وهتعرف ليه الكل بيتكلم عنه', 'مش مجرد منتج… ده الفرق اللي هتحسه من أول استخدام', 'اللي جربوه قالوا كلمة واحدة: يستاهل', 'العرض ده مش هيفضل موجود بعد النهاردة']
+    }
+  };
+
+  const SOCIAL_PROOF_TEMPLATES = [
+    n => `🔥 ${n} شخص طلبوا المنتج ده خلال الـ24 ساعة اللي فاتت`,
+    n => `⭐ أكتر من ${n} عميل قالوا رأيهم وكانوا مبسوطين بيه`,
+    n => `📦 ${n} أوردر اتشحن من المنتج ده الأسبوع ده بس`,
+    n => `👥 ${n} شخص بيشوفوا الصفحة دي دلوقتي`
+  ];
+
+  function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  function detectCategory(text) {
+    const t = (text || '').toLowerCase();
+    let bestCat = 'general';
+    let bestScore = 0;
+    for (const [cat, data] of Object.entries(HOOKS_BANK)) {
+      if (cat === 'general') continue;
+      const score = data.keywords.filter(k => t.includes(k)).length;
+      if (score > bestScore) { bestScore = score; bestCat = cat; }
+    }
+    return bestCat;
+  }
+
+  function generateMarketingCopy(title, description) {
+    const combinedText = (title || '') + ' ' + (description || '');
+    const cat = detectCategory(combinedText);
+    const catBank = HOOKS_BANK[cat];
+    const generalBank = HOOKS_BANK.general;
+
+    // نخلط بين هوكات القسم المتخصص والعامة عشان تنوع أكبر
+    const badgePool = catBank.badges.concat(generalBank.badges);
+    const hookPool = catBank.hooks.concat(generalBank.hooks);
+
+    const badge = pickRandom(badgePool);
+    const hook = pickRandom(hookPool);
+    const socialN = Math.floor(Math.random() * 70) + 15; // بين 15 و 84
+    const social = pickRandom(SOCIAL_PROOF_TEMPLATES)(socialN);
+
+    return { badge, hook, social };
+  }
+
+  function generateAICopy() {
+    const title = document.getElementById('inputTitle').value.trim();
+    const description = document.getElementById('inputDescription').value.trim();
+
+    if (!title) {
+      showMsg('اكتب عنوان المنتج الأول عشان أقدر أولّدلك نصوص مناسبة له', 'err');
+      document.getElementById('inputTitle').focus();
+      return;
+    }
+
+    const btn = document.getElementById('btnAiGenerate');
+    const original = btn.innerHTML;
+    btn.innerHTML = '<span class="ai-ic">⏳</span> جاري التوليد...';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      const copy = generateMarketingCopy(title, description);
+      document.getElementById('inputBadgeText').value = copy.badge;
+      document.getElementById('inputHookLine').value = copy.hook;
+      document.getElementById('inputSocialProof').value = copy.social;
+      btn.innerHTML = original;
+      btn.disabled = false;
+      showMsg('تم توليد النصوص التسويقية ✨ تقدر تعدّلها أو تولّد نسخة تانية', 'ok');
+    }, 500);
+  }
 
   // ===== إدارة الصور =====
   let existingImages = []; // روابط صور موجودة بالفعل (من قاعدة البيانات)
@@ -398,6 +544,9 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
       document.getElementById('inputDescription').value = data.description || '';
       document.getElementById('inputNewPrice').value = data.product_price || '';
       document.getElementById('inputWhatsapp').value = data.whatsapp_number || '';
+      document.getElementById('inputBadgeText').value = data.badge_text || '';
+      document.getElementById('inputHookLine').value = data.hook_line || '';
+      document.getElementById('inputSocialProof').value = data.social_proof_text || '';
 
       selectedColor = data.theme_color || 'gold';
       selectedStyle = data.theme_style && ['classic','modern','professional'].includes(data.theme_style) ? data.theme_style : 'modern';
@@ -420,6 +569,9 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
     const description = document.getElementById('inputDescription').value.trim();
     const price = document.getElementById('inputNewPrice').value.trim();
     const whatsapp = document.getElementById('inputWhatsapp').value.trim();
+    const badgeText = document.getElementById('inputBadgeText').value.trim();
+    const hookLine = document.getElementById('inputHookLine').value.trim();
+    const socialProof = document.getElementById('inputSocialProof').value.trim();
 
     if (!title || !price || !whatsapp) {
       showMsg('من فضلك املأ عنوان المنتج والسعر ورقم الواتساب الأول عشان تقدر تعاين', 'err');
@@ -435,6 +587,9 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
     params.set('whatsapp', whatsapp);
     params.set('color', selectedColor);
     params.set('style', selectedStyle);
+    if (badgeText) params.set('badge', badgeText);
+    if (hookLine) params.set('hook', hookLine);
+    if (socialProof) params.set('social', socialProof);
     if (allImages.length) params.set('images', JSON.stringify(allImages));
 
     window.open('landing.html?' + params.toString(), '_blank');
@@ -471,6 +626,9 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
     const description = document.getElementById('inputDescription').value.trim();
     const price = document.getElementById('inputNewPrice').value.trim();
     const whatsapp = document.getElementById('inputWhatsapp').value.trim();
+    const badgeText = document.getElementById('inputBadgeText').value.trim();
+    const hookLine = document.getElementById('inputHookLine').value.trim();
+    const socialProof = document.getElementById('inputSocialProof').value.trim();
 
     if (!title || !price || !whatsapp) {
       showMsg('من فضلك املأ عنوان المنتج والسعر ورقم الواتساب على الأقل', 'err');
@@ -491,6 +649,9 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
         whatsapp_number: whatsapp,
         theme_color: selectedColor,
         theme_style: selectedStyle,
+        badge_text: badgeText,
+        hook_line: hookLine,
+        social_proof_text: socialProof,
       };
 
       if (!targetId) {
