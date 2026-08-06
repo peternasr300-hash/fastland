@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الأوردرات - PageKit PRO</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap');
+
+:root {
+  --gold: #B8892A;
+  --gold2: #E4B84A;
+  --gold3: #F5D97A;
+  --black: #0A0A0A;
+  --charcoal: #1A1A1A;
+  --rose: #C4526B;
+  --white: #FFFFFF;
+  --muted: #8A7A6A;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--white); min-height: 100vh; }
+
+/* الهيدر */
+.top-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 18px 30px; background: rgba(20,10,30,0.9); backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(184,137,42,0.25); position: sticky; top: 0; z-index: 100;
+  flex-wrap: wrap; gap: 12px;
+}
+.top-bar .brand { font-weight: 900; color: var(--gold2); font-size: 18px; }
+.user-info { display: flex; align-items: center; gap: 14px; font-size: 13px; }
+#userEmailDisplay { color: var(--gold2); font-weight: 700; }
+.btn-logout { background: #dc2626; color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: bold; font-family: 'Tajawal'; font-size: 13px; }
+.btn-logout:hover { background: #b91c1c; }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+
+.page-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 24px; flex-wrap: wrap; gap: 16px;
+}
+.page-header h1 { font-size: 22px; font-weight: 900; }
+.page-header h1 span { color: var(--gold2); }
+.page-header p { color: var(--muted); font-size: 13px; margin-top: 6px; }
+.btn-back {
+  background: rgba(255,255,255,0.08); color: var(--white); border: 1px solid rgba(255,255,255,0.15);
+  padding: 8px 18px; border-radius: 20px; cursor: pointer; font-family: 'Tajawal'; font-size: 13px; text-decoration: none; display: inline-block;
+}
+.btn-back:hover { background: rgba(255,255,255,0.15); }
+
+.stats-box {
+  background: #150d22; border: 2px solid rgba(184,137,42,0.3); border-radius: 20px;
+  padding: 18px 24px; margin-bottom: 24px; display: flex; align-items: center; gap: 16px;
+}
+.stats-box .num { font-size: 32px; font-weight: 900; color: var(--gold2); line-height: 1; }
+.stats-box .label { color: var(--muted); font-size: 13px; }
+
+/* الجدول */
+.table-wrap {
+  background: #150d22; border: 2px solid rgba(184,137,42,0.2); border-radius: 20px;
+  overflow-x: auto;
+}
+table { width: 100%; border-collapse: collapse; min-width: 780px; }
+thead th {
+  text-align: right; font-size: 12px; color: var(--gold3); font-weight: 900;
+  padding: 16px 18px; border-bottom: 1px solid rgba(184,137,42,0.25); white-space: nowrap;
+}
+tbody td {
+  padding: 14px 18px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: top;
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: rgba(255,255,255,0.02); }
+td.name { font-weight: 700; color: var(--white); }
+td.phone { direction: ltr; text-align: right; color: var(--gold3); }
+td.addr { color: var(--muted); max-width: 260px; }
+td.notes { color: var(--muted); max-width: 200px; }
+td.date { color: var(--muted); font-size: 12px; white-space: nowrap; }
+td.pagecol { color: var(--gold2); font-size: 12px; max-width: 160px; }
+.wa-link {
+  display: inline-flex; align-items: center; gap: 5px; color: #4ADE80; text-decoration: none;
+  font-size: 12px; font-weight: 700; margin-top: 4px;
+}
+.wa-link:hover { text-decoration: underline; }
+
+.empty-state {
+  text-align: center; padding: 60px 20px; color: var(--muted);
+  background: #150d22; border: 2px dashed rgba(184,137,42,0.25); border-radius: 20px;
+}
+.empty-state p { font-size: 15px; margin-bottom: 6px; }
+.empty-state span { font-size: 13px; }
+
+.loading { text-align: center; color: var(--muted); padding: 40px; font-size: 14px; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="brand">⚡ PageKit PRO</div>
+  <div class="user-info">
+    <span id="userEmailDisplay"></span>
+    <button class="btn-logout" onclick="signOut()">تسجيل خروج</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="page-header">
+    <div>
+      <h1>📋 <span id="titleText">الأوردرات</span></h1>
+      <p id="subText">كل الطلبات اللي جالك من كل اللاندينج بيدجز بتاعتك</p>
+    </div>
+    <a class="btn-back" href="dashboard.html">→ رجوع للوحة التحكم</a>
+  </div>
+
+  <div class="stats-box">
+    <div class="num" id="ordersCount">0</div>
+    <div class="label">طلب</div>
+  </div>
+
+  <div id="contentArea">
+    <div class="loading">جاري التحميل...</div>
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://yjvzwmbpdzlvxmfwikbu.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_qRIkc1Ziyp5cJ6BKp0KhWw_pj0meP0D';
+
+  const { createClient } = supabase;
+  const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  async function signOut() {
+    await _supabase.auth.signOut();
+    window.location.href = 'login.html';
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.innerText = str == null ? '' : str;
+    return div.innerHTML;
+  }
+
+  function formatDate(iso) {
+    if (!iso) return '-';
+    const d = new Date(iso);
+    return d.toLocaleDateString('ar-EG', { day: '2-digit', month: '2-digit', year: 'numeric' }) +
+      ' - ' + d.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  async function loadOrders() {
+    const { data: { session } } = await _supabase.auth.getSession();
+
+    if (!session) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    document.getElementById('userEmailDisplay').innerText = session.user.email;
+
+    const params = new URLSearchParams(window.location.search);
+    const pageId = params.get('page_id');
+
+    let query = _supabase
+      .from('orders')
+      .select('*, user_pages(page_title)')
+      .order('created_at', { ascending: false });
+
+    if (pageId) {
+      query = query.eq('page_id', pageId);
+    }
+
+    const { data: orders, error } = await query;
+
+    const contentArea = document.getElementById('contentArea');
+
+    if (error) {
+      contentArea.innerHTML = '<div class="loading">حصل خطأ أثناء تحميل الأوردرات: ' + escapeHtml(error.message) + '</div>';
+      return;
+    }
+
+    if (pageId && orders.length > 0 && orders[0].user_pages) {
+      document.getElementById('titleText').innerText = 'أوردرات: ' + orders[0].user_pages.page_title;
+      document.getElementById('subText').innerText = 'كل الطلبات اللي جالك من اللاندينج بيدج دي';
+    } else if (pageId) {
+      document.getElementById('titleText').innerText = 'أوردرات الصفحة دي';
+    }
+
+    document.getElementById('ordersCount').innerText = orders.length;
+
+    if (orders.length === 0) {
+      contentArea.innerHTML = `
+        <div class="empty-state">
+          <p>لسه معملتش أي طلب 🙁</p>
+          <span>أول ما حد يملى الفورم في صفحتك، الطلب هيظهر هنا</span>
+        </div>`;
+      return;
+    }
+
+    const showPageCol = !pageId;
+
+    let rows = '';
+    orders.forEach(o => {
+      const waNum = (o.customer_phone || '').replace(/[^0-9]/g, '');
+      const waUrl = 'https://wa.me/' + waNum;
+      rows += `
+        <tr>
+          <td class="date">${formatDate(o.created_at)}</td>
+          ${showPageCol ? `<td class="pagecol">${escapeHtml(o.user_pages ? o.user_pages.page_title : '-')}</td>` : ''}
+          <td class="name">${escapeHtml(o.customer_name)}</td>
+          <td class="phone">
+            ${escapeHtml(o.customer_phone)}<br>
+            <a class="wa-link" href="${waUrl}" target="_blank">💬 واتساب</a>
+          </td>
+          <td class="addr">${escapeHtml(o.customer_address)}</td>
+          <td class="notes">${escapeHtml(o.notes || '-')}</td>
+          <td>${escapeHtml(o.product_price || '-')} جنيه</td>
+        </tr>`;
+    });
+
+    contentArea.innerHTML = `
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>التاريخ</th>
+              ${showPageCol ? '<th>اللاندينج بيدج</th>' : ''}
+              <th>اسم العميل</th>
+              <th>الموبايل</th>
+              <th>العنوان</th>
+              <th>ملاحظات</th>
+              <th>السعر</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+  }
+
+  window.onload = loadOrders;
+</script>
+
+</body>
+</html>
