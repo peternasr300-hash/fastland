@@ -502,6 +502,21 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
     });
   }
 
+  // ===== فيسبوك بيكسل =====
+  function loadFacebookPixel(pixelId) {
+    if (!pixelId) return;
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', pixelId);
+    fbq('track', 'PageView');
+  }
+
   function startCountdown() {
     let totalSeconds = 23 * 3600 + 59 * 60 + 59;
     const el = document.getElementById('countdownTimer');
@@ -515,11 +530,11 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
     }, 1000);
   }
 
-  let pageState = { pageId: null, ownerUserId: null, title: '', price: '', whatsapp: '', isPreview: true };
+  let pageState = { pageId: null, ownerUserId: null, title: '', price: '', whatsapp: '', pixelId: null, isPreview: true };
 
   function renderPage(data) {
     const { title, description, price, whatsapp, color, style, images, badge, hook, social, banner,
-            paragraph1, paragraph2, paragraph3, parts, features, reviews } = data;
+            paragraph1, paragraph2, paragraph3, parts, features, reviews, pixelId } = data;
 
     applyTheme(color, style);
 
@@ -580,6 +595,13 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
     pageState.title = title;
     pageState.price = price;
     pageState.whatsapp = whatsapp;
+    pageState.pixelId = pixelId || null;
+
+    // البيكسل بيتحمل بس في اللاندينج المنشورة الحقيقية، مش في وضع المعاينة
+    // عشان معاينتك للتجربة متبوظش إحصائيات الإعلان عند العميل
+    if (pixelId && !pageState.isPreview) {
+      loadFacebookPixel(pixelId);
+    }
 
     document.getElementById('loadingScreen').style.display = 'none';
     document.getElementById('pageContent').style.display = 'block';
@@ -656,6 +678,16 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
 
     document.getElementById('orderName').value = '';
     document.getElementById('orderPhone').value = '';
+
+    // نبعت إيفنت للبيكسل عشان فيسبوك يعرف إن الطلب ده تم، ويستخدمه في تحسين الإعلان
+    if (pageState.pixelId && typeof fbq === 'function') {
+      fbq('track', 'Purchase', {
+        value: parseFloat(pageState.price) || 0,
+        currency: 'EGP',
+        content_name: pageState.title
+      });
+    }
+
     showSuccessDialog();
   }
 
@@ -709,7 +741,8 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
         paragraph3: data.ai_paragraph_3,
         parts: partsImages,
         features: featuresList,
-        reviews: reviewsList
+        reviews: reviewsList,
+        pixelId: data.fb_pixel_id
       });
     } else {
       // ===== وضع المعاينة: هات البيانات من رابط الصفحة نفسه =====
@@ -745,7 +778,8 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
         paragraph3: params.get('paragraph3') || '',
         parts: partsImages,
         features: featuresList,
-        reviews: reviewsList
+        reviews: reviewsList,
+        pixelId: params.get('pixel') || ''
       });
     }
   }
