@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بانل الأونر</title>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Tahoma', Arial, sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    margin: 0;
+    padding: 24px;
+  }
+  .container { max-width: 1000px; margin: 0 auto; }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  .sub { color: #94a3b8; margin-bottom: 24px; font-size: 14px; }
+  .stats { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+  .card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 16px 20px;
+    flex: 1;
+    min-width: 140px;
+  }
+  .card .num { font-size: 26px; font-weight: bold; color: #38bdf8; }
+  .card .label { font-size: 13px; color: #94a3b8; margin-top: 4px; }
+  input#search {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    background: #1e293b;
+    color: #e2e8f0;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+  table { width: 100%; border-collapse: collapse; background: #1e293b; border-radius: 10px; overflow: hidden; }
+  th, td { padding: 12px 14px; text-align: right; border-bottom: 1px solid #334155; font-size: 14px; }
+  th { background: #0f172a; color: #94a3b8; font-weight: normal; }
+  tr.clickable { cursor: pointer; }
+  tr.clickable:hover { background: #263449; }
+  .badge {
+    display: inline-block;
+    background: #0ea5e9;
+    color: white;
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 13px;
+  }
+  .pub-badge {
+    display: inline-block;
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  .pub-badge.live { background: rgba(74,222,128,0.15); color: #4ADE80; }
+  .pub-badge.draft { background: rgba(148,163,184,0.15); color: #94a3b8; }
+  .loading, .error { text-align: center; padding: 40px; color: #94a3b8; }
+  .error { color: #f87171; }
+
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 50;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 16px;
+    overflow-y: auto;
+  }
+  .overlay.open { display: flex; }
+  .modal {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    max-width: 760px;
+    width: 100%;
+    padding: 24px;
+  }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .modal-header h2 { font-size: 18px; margin: 0; }
+  .close-btn {
+    background: #334155;
+    border: none;
+    color: #e2e8f0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  .section-title { font-size: 14px; color: #94a3b8; margin: 20px 0 8px; }
+  .empty-note { color: #64748b; font-size: 13px; padding: 8px 0; }
+
+  .page-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+  }
+  .page-row .info { display: flex; flex-direction: column; gap: 4px; }
+  .page-row .title { font-weight: bold; font-size: 14px; }
+  .page-row .meta { font-size: 12px; color: #94a3b8; }
+  .btn-view {
+    background: #0ea5e9;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .btn-view:hover { background: #0284c7; }
+
+  .order-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .order-card .field {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .order-card .field:last-child { border-bottom: none; }
+  .order-card .field .k { color: #94a3b8; }
+  .order-card .field .v { text-align: left; direction: ltr; word-break: break-all; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>بانل الأونر</h1>
+  <div class="sub">متابعة العملاء واللاندات والأوردرات — دوس على أي عميل تشوف تفاصيله</div>
+
+  <div class="stats" id="stats"></div>
+
+  <input type="text" id="search" placeholder="دور بإيميل العميل...">
+
+  <div id="content"><div class="loading">جاري التحميل...</div></div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle">تفاصيل العميل</h2>
+      <button class="close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modalBody"><div class="loading">جاري التحميل...</div></div>
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = "https://yjvzwmbpdzlvxmfwikbu.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_qRIkc1Ziyp5cJ6BKp0KhWw_pj0meP0D";
+  // لو رفعت admin.html في نفس فولدر landing.html سيب السطر ده زي ما هو
+  const LANDING_PAGE_URL = "landing.html";
+
+  const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  let allRows = [];
+
+  async function loadData() {
+    const { data, error } = await client.rpc('admin_summary');
+
+    if (error) {
+      document.getElementById('content').innerHTML =
+        `<div class="error">حصل خطأ: ${error.message}</div>`;
+      return;
+    }
+
+    allRows = data || [];
+    renderStats(allRows);
+    renderTable(allRows);
+  }
+
+  function renderStats(rows) {
+    const totalClients = rows.length;
+    const totalPages = rows.reduce((sum, r) => sum + Number(r.pages_count || 0), 0);
+    const totalOrders = rows.reduce((sum, r) => sum + Number(r.orders_count || 0), 0);
+
+    document.getElementById('stats').innerHTML = `
+      <div class="card"><div class="num">${totalClients}</div><div class="label">إجمالي العملاء</div></div>
+      <div class="card"><div class="num">${totalPages}</div><div class="label">إجمالي اللاندات</div></div>
+      <div class="card"><div class="num">${totalOrders}</div><div class="label">إجمالي الأوردرات</div></div>
+    `;
+  }
+
+  function renderTable(rows) {
+    if (rows.length === 0) {
+      document.getElementById('content').innerHTML = `<div class="loading">مفيش عملاء لسه</div>`;
+      return;
+    }
+
+    let html = `
+      <table>
+        <thead>
+          <tr>
+            <th>الإيميل</th>
+            <th>عدد اللاندات</th>
+            <th>عدد الأوردرات</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    rows.forEach(r => {
+      html += `
+        <tr class="clickable" onclick="openModal('${r.user_id}', '${(r.email || '').replace(/'/g, "\\'")}')">
+          <td>${r.email || '—'}</td>
+          <td><span class="badge">${r.pages_count}</span></td>
+          <td><span class="badge">${r.orders_count}</span></td>
+        </tr>
+      `;
+    });
+
+    html += `</tbody></table>`;
+    document.getElementById('content').innerHTML = html;
+  }
+
+  document.getElementById('search').addEventListener('input', (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const filtered = q
+      ? allRows.filter(r => (r.email || '').toLowerCase().includes(q))
+      : allRows;
+    renderTable(filtered);
+  });
+
+  // أعمدة تقنية منستخدمهاش في عرض تفاصيل الأوردر (موجودة أصلا في الشكل العام)
+  const HIDDEN_ORDER_FIELDS = ['user_id'];
+
+  function formatFieldName(key) {
+    return key.replace(/_/g, ' ');
+  }
+
+  async function openModal(userId, email) {
+    document.getElementById('modalTitle').textContent = email || 'تفاصيل العميل';
+    document.getElementById('modalBody').innerHTML = `<div class="loading">جاري التحميل...</div>`;
+    document.getElementById('overlay').classList.add('open');
+
+    const [pagesRes, ordersRes] = await Promise.all([
+      client.rpc('admin_user_pages', { target_user_id: userId }),
+      client.rpc('admin_user_orders', { target_user_id: userId })
+    ]);
+
+    if (pagesRes.error || ordersRes.error) {
+      document.getElementById('modalBody').innerHTML =
+        `<div class="error">حصل خطأ: ${(pagesRes.error || ordersRes.error).message}</div>`;
+      return;
+    }
+
+    const pages = pagesRes.data || [];
+    const orders = ordersRes.data || [];
+
+    let html = `<div class="section-title">اللاندات (${pages.length})</div>`;
+    if (pages.length === 0) {
+      html += `<div class="empty-note">مفيش لاندات</div>`;
+    } else {
+      pages.forEach(p => {
+        const isLive = !!p.is_published;
+        const viewUrl = `${LANDING_PAGE_URL}?id=${p.id}`;
+        html += `
+          <div class="page-row">
+            <div class="info">
+              <div class="title">${p.page_title || 'بدون اسم'}</div>
+              <div class="meta">
+                السعر: ${p.product_price || '—'}
+                &nbsp;•&nbsp;
+                <span class="pub-badge ${isLive ? 'live' : 'draft'}">${isLive ? 'منشورة' : 'مسودة'}</span>
+              </div>
+            </div>
+            <a class="btn-view" href="${viewUrl}" target="_blank" rel="noopener">👁️ شوف اللاند</a>
+          </div>
+        `;
+      });
+    }
+
+    html += `<div class="section-title">الأوردرات (${orders.length})</div>`;
+    if (orders.length === 0) {
+      html += `<div class="empty-note">مفيش أوردرات</div>`;
+    } else {
+      orders.forEach(o => {
+        html += `<div class="order-card">`;
+        Object.keys(o).forEach(key => {
+          if (HIDDEN_ORDER_FIELDS.includes(key)) return;
+          let value = o[key];
+          if (value === null || value === undefined || value === '') value = '—';
+          html += `
+            <div class="field">
+              <span class="k">${formatFieldName(key)}</span>
+              <span class="v">${value}</span>
+            </div>
+          `;
+        });
+        html += `</div>`;
+      });
+    }
+
+    document.getElementById('modalBody').innerHTML = html;
+  }
+
+  function closeModal() {
+    document.getElementById('overlay').classList.remove('open');
+  }
+
+  document.getElementById('overlay').addEventListener('click', (e) => {
+    if (e.target.id === 'overlay') closeModal();
+  });
+
+  loadData();
+</script>
+</body>
+</html>
