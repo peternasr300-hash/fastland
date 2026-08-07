@@ -40,12 +40,14 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
 
 .section-label { font-size: 13px; font-weight: 900; color: var(--gold3); margin: 28px 0 14px; display: flex; align-items: center; gap: 8px; }
 .section-label:first-of-type { margin-top: 0; }
+.section-hint { color: var(--muted); font-size: 12px; margin: -8px 0 14px; line-height: 1.6; }
 
 .f-group { margin-bottom: 18px; }
 .f-group label { display: block; font-weight: 700; color: var(--gold2); margin-bottom: 8px; font-size: 13px; }
 .f-group input, .f-group textarea { width: 100%; padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; font-family: 'Tajawal'; font-size: 14px; outline: none; resize: vertical; }
 .f-group input:focus, .f-group textarea:focus { border-color: var(--gold2); }
 .f-group textarea { min-height: 90px; line-height: 1.7; }
+.f-group textarea.tall { min-height: 130px; }
 
 /* مولّد النصوص التسويقية */
 .ai-gen-box {
@@ -72,11 +74,12 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
 .image-upload-zone:hover { border-color: var(--gold2); background: rgba(184,137,42,0.05); }
 .image-upload-zone .icon { font-size: 26px; margin-bottom: 8px; }
 .image-upload-zone p { color: var(--muted); font-size: 13px; }
-#fileInput { display: none; }
+#fileInput, #bannerFileInput, #partsFileInput { display: none; }
 
 .images-preview { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
 .img-thumb { position: relative; width: 84px; height: 84px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
 .img-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.img-thumb.banner-thumb { width: 100%; height: 150px; }
 .img-thumb .remove-btn {
   position: absolute; top: 3px; left: 3px; background: rgba(0,0,0,0.7); color: #fff; border: none;
   width: 20px; height: 20px; border-radius: 50%; cursor: pointer; font-size: 11px; line-height: 1;
@@ -106,6 +109,22 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
 .style-card .ic { font-size: 24px; margin-bottom: 8px; }
 .style-card .name { font-weight: 900; font-size: 14px; margin-bottom: 4px; }
 .style-card .desc { font-size: 11px; color: var(--muted); }
+
+/* الريفيوهات */
+.reviews-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 14px; }
+.review-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 14px; position: relative; }
+.review-card .review-row { display: flex; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+.review-card input[type="text"] { flex: 1; min-width: 120px; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #fff; font-family: 'Tajawal'; font-size: 13px; outline: none; }
+.review-card input[type="text"]:focus { border-color: var(--gold2); }
+.review-card select { padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #fff; font-family: 'Tajawal'; font-size: 13px; outline: none; }
+.review-card textarea { width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #fff; font-family: 'Tajawal'; font-size: 13px; min-height: 60px; line-height: 1.6; outline: none; resize: vertical; }
+.review-card textarea:focus { border-color: var(--gold2); }
+.review-card .remove-review { position: absolute; top: 10px; left: 10px; background: rgba(196,82,107,0.15); color: var(--rose); border: 1px solid rgba(196,82,107,0.4); width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 12px; }
+.btn-add-review {
+  width: 100%; background: rgba(184,137,42,0.12); color: var(--gold3); font-weight: 900; padding: 12px;
+  border-radius: 14px; border: 1px dashed rgba(184,137,42,0.5); cursor: pointer; font-size: 13px; font-family: 'Tajawal';
+}
+.btn-add-review:hover { background: rgba(184,137,42,0.2); }
 
 .actions-row { display:flex; gap:10px; margin-top: 30px; }
 .btn-build { flex: 1; background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #000; font-weight: 900; padding: 16px; border-radius: 40px; border: none; cursor: pointer; font-size: 16px; box-shadow: 0 8px 25px rgba(184,137,42,0.4); font-family: 'Tajawal'; }
@@ -182,7 +201,7 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
       <button type="button" class="btn-ai-generate" id="btnAiGenerate" onclick="generateAICopy()">
         <span class="ai-ic">✨</span> ولّد نصوص تسويقية بالذكاء الاصطناعي
       </button>
-      <p class="ai-hint">هيحلل عنوان ووصف منتجك ويقترحلك باچ + هوك + سوشيال بروف مناسبين. تقدر تولّد أكتر من مرة وتعدّل زي ما تحب.</p>
+      <p class="ai-hint">هيحلل عنوان ووصف منتجك ويقترحلك باچ + هوك + سوشيال بروف + 3 فقرات تسويقية تفصيلية مناسبين. تقدر تولّد أكتر من مرة وتعدّل زي ما تحب.</p>
     </div>
     <div class="f-group">
       <label>🏷️ الباچ اللي فوق العنوان:</label>
@@ -196,6 +215,29 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
       <label>👥 جملة السوشيال بروف:</label>
       <input type="text" id="inputSocialProof" placeholder="مثال: 🔥 23 شخص طلبوا المنتج ده خلال الـ24 ساعة اللي فاتت">
     </div>
+    <div class="f-group">
+      <label>📄 فقرة تسويقية إضافية 1:</label>
+      <textarea class="tall" id="inputAiParagraph1" placeholder="فقرة تفصيلية تتكلم عن المشكلة اللي المنتج بيحلها..."></textarea>
+    </div>
+    <div class="f-group">
+      <label>📄 فقرة تسويقية إضافية 2:</label>
+      <textarea class="tall" id="inputAiParagraph2" placeholder="فقرة تفصيلية تتكلم عن مميزات المنتج وليه يستاهل..."></textarea>
+    </div>
+    <div class="f-group">
+      <label>📄 فقرة تسويقية إضافية 3:</label>
+      <textarea class="tall" id="inputAiParagraph3" placeholder="فقرة تفصيلية تقفل بدعوة للشراء..."></textarea>
+    </div>
+
+    <div class="section-label">🖼️ بانر المنتج الرئيسي</div>
+    <p class="section-hint">الصورة دي هتظهر كبنر كبير فوق اللاندينج بيدج.</p>
+    <div class="f-group">
+      <div class="image-upload-zone" onclick="document.getElementById('bannerFileInput').click()">
+        <div class="icon">📤</div>
+        <p>دوس هنا وارفع صورة البانر</p>
+      </div>
+      <input type="file" id="bannerFileInput" accept="image/*" onchange="handleBannerFileSelect(event)">
+      <div class="images-preview" id="bannerPreview"></div>
+    </div>
 
     <div class="section-label">🖼️ صور المنتج</div>
     <div class="f-group">
@@ -205,6 +247,30 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
       </div>
       <input type="file" id="fileInput" accept="image/*" multiple onchange="handleFileSelect(event)">
       <div class="images-preview" id="imagesPreview"></div>
+    </div>
+
+    <div class="section-label">🧩 صور أجزاء المنتج</div>
+    <p class="section-hint">لو المنتج بيتكون من أكتر من جزء ارفع صورة لكل جزء، ولو مش أجزاء استخدم القسم ده لصور إضافية للمنتج.</p>
+    <div class="f-group">
+      <div class="image-upload-zone" onclick="document.getElementById('partsFileInput').click()">
+        <div class="icon">📤</div>
+        <p>دوس هنا وارفع صور أجزاء المنتج أو صور إضافية</p>
+      </div>
+      <input type="file" id="partsFileInput" accept="image/*" multiple onchange="handlePartsFileSelect(event)">
+      <div class="images-preview" id="partsPreview"></div>
+    </div>
+
+    <div class="section-label">⭐ مزايا المنتج</div>
+    <p class="section-hint">اكتب كل ميزة في سطر لوحدها، هتتحول لقائمة مميزات في اللاندينج بيدج.</p>
+    <div class="f-group">
+      <textarea class="tall" id="inputFeatures" placeholder="مثال:&#10;خامة فاخرة 100%&#10;ضمان سنة كاملة&#10;توصيل لكل المحافظات"></textarea>
+    </div>
+
+    <div class="section-label">💬 ريفيوهات العملاء</div>
+    <p class="section-hint">اكتب الريفيوهات اللي عايز تظهر في اللاندينج بيدج، وتقدر تضيف أكتر من واحد.</p>
+    <div class="f-group">
+      <div class="reviews-list" id="reviewsList"></div>
+      <button type="button" class="btn-add-review" onclick="addReview()">➕ إضافة ريفيو</button>
     </div>
 
     <div class="section-label">🎨 لون اللاندينج</div>
@@ -281,42 +347,82 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
     fashion: {
       keywords: ['فستان','عباية','تيشرت','تي شيرت','بنطلون','حذاء','شنطة','جاكيت','قميص','طرحة','اكسسوار','مجوهرات','خاتم','سلسلة','حجاب','بدلة','جلابية','كارديجان'],
       badges: ['👗 موضة الموسم', '🔥 قطعة العيد', '✨ تصميم محدود ومميز', '🎯 الأكتر طلبًا هالأسبوع'],
-      hooks: ['لبسة توريك تعليق من كل اللي حواليكي', 'شياكة مش بتتقال… بتتلبس', 'قطعة هتضيفلك ثقة مش بس شكل', 'اختاري نفسك، اختاري تتميزي']
+      hooks: ['لبسة توريك تعليق من كل اللي حواليكي', 'شياكة مش بتتقال… بتتلبس', 'قطعة هتضيفلك ثقة مش بس شكل', 'اختاري نفسك، اختاري تتميزي'],
+      paragraphs: {
+        problem: ['كتير مننا بيدور على قطعة تفرق فعلاً وسط زحمة الموديلات المتكررة، وبتلاقي نفسك بتشتري حاجة بتشبه اللي عند الكل من غير ما تحس إنها بتعبر عنك.', 'مشكلة كل قطعة شبه التانية إنها بتخلي إطلالتك متوقعة، وبتفقدك الإحساس إنك مميزة وسط أي مكان تروحيه.'],
+        features: ['المنتج ده اتصمم بعناية عشان يجمع بين الراحة والشياكة في نفس الوقت، بخامات مختارة تدوم وتفضل شكلها زي أول يوم.', 'التفاصيل الصغيرة هي اللي بتفرق، ولذلك كل جزء في القطعة دي اتحسب بدقة عشان يديك مظهر متكامل من غير مجهود.'],
+        cta: ['الكمية محدودة والطلب عليها زايد، فلو حاسة إنها القطعة اللي بتدور عليها متأخريش واطلبيها دلوقتي.', 'جربي تحسي بالفرق بنفسك، والطلب سهل وبسيط وهيوصلك لحد باب البيت.']
+      }
     },
     electronics: {
       keywords: ['سماعة','سماعات','شاحن','موبايل','لابتوب','ساعة ذكية','كابل','باور بانك','كاميرا','ريموت','بلوتوث','شاشة','راوتر'],
       badges: ['⚡ تكنولوجيا بتوفرلك وقتك', '🔋 أداء يفرق فعلاً', '🚀 الأحدث في فئته'],
-      hooks: ['بطارية تكفيك يومك من غير ما تقلق', 'جودة هتخليك تندم إنك اتأخرت تجربها', 'أداء بيتكلم عن نفسه من أول استخدام']
+      hooks: ['بطارية تكفيك يومك من غير ما تقلق', 'جودة هتخليك تندم إنك اتأخرت تجربها', 'أداء بيتكلم عن نفسه من أول استخدام'],
+      paragraphs: {
+        problem: ['أكتر حاجة بتضايق في الأجهزة العادية إنها بتخذلك في أهم لحظة، سواء بطارية بتخلص بسرعة أو أداء بطيء بيضيع وقتك.', 'مفيش حاجة أصعب من إنك تعتمد على جهاز وتلاقيه مش قد المسؤولية وقت ما تحتاجه أكتر حاجة.'],
+        features: ['المنتج ده اتصمم عشان يديك أداء ثابت وموثوق على مدار اليوم، مع جودة تصنيع بتخليه يعيش معاك لفترة طويلة.', 'سهل الاستخدام من أول لحظة، ومصمم بشكل عملي يناسب احتياجاتك اليومية من غير تعقيد.'],
+        cta: ['العرض متاح دلوقتي بسعر مناسب، وكل يوم بيتأخر فيه قرارك بيقرب العرض من الانتهاء.', 'اطلبه دلوقتي وجرب الفرق بنفسك، وهيوصلك بسرعة وأمان.']
+      }
     },
     beauty: {
       keywords: ['كريم','سيروم','مكياج','عطر','شامبو','بشرة','شعر','مرطب','ماسك','بودرة','روج','فاونديشن'],
       badges: ['✨ سر جمالك الجديد', '🌿 مكونات فعالة ومختارة بعناية', '💫 نتيجة من أول أسبوع'],
-      hooks: ['بشرتك تستاهل اهتمام أكتر', 'نتيجة هتلاحظيها بنفسك قبل ما حد يقولك', 'جمالك يبدأ من روتين بسيط زي ده']
+      hooks: ['بشرتك تستاهل اهتمام أكتر', 'نتيجة هتلاحظيها بنفسك قبل ما حد يقولك', 'جمالك يبدأ من روتين بسيط زي ده'],
+      paragraphs: {
+        problem: ['كتير من المنتجات في السوق بتوعد بنتيجة سريعة وفي الآخر بتلاقيها مجرد كلام تسويقي من غير نتيجة حقيقية تحسيها.', 'بشرتك وشعرك بيحتاجوا منتج ثابت في جودته، مش تجربة وتحبطي منها بعد كام يوم استخدام.'],
+        features: ['اتصمم المنتج ده بمكونات مختارة بعناية عشان يدي نتيجة تحسيها بنفسك من أول أسبوعين استخدام.', 'قوامه خفيف وسهل الاستخدام، ومناسب للاستخدام اليومي من غير ما يثقل على بشرتك أو شعرك.'],
+        cta: ['ابدئي روتينك الجديد دلوقتي، وهتلاحظي الفرق بنفسك قبل ما حد يقولك.', 'الكمية المتاحة محدودة، اطلبي دلوقتي عشان تضمني وصول المنتج بسرعة.']
+      }
     },
     food: {
       keywords: ['شوكولاتة','حلويات','مكسرات','عسل','قهوة','اكل','طعام','كيك','حلاوة','عصير','بسكويت'],
       badges: ['😋 طعم مختلف فعلاً', '🎁 هدية بتفتح النفس', '🔥 الأكتر طلبًا للمناسبات'],
-      hooks: ['طعم بيرجعك طفل تاني', 'مذاق مش هتلاقيه في أي مكان تاني', 'كل قطعة حكاية طعم لوحدها']
+      hooks: ['طعم بيرجعك طفل تاني', 'مذاق مش هتلاقيه في أي مكان تاني', 'كل قطعة حكاية طعم لوحدها'],
+      paragraphs: {
+        problem: ['صعب تلاقي طعم أصلي وسط كل المنتجات التجارية اللي بقت متشابهة ومفيهاش نكهة حقيقية.', 'كتير من الهدايا بتبقى شكل بس من غير طعم يفضل في الذاكرة، وده اللي بيفرق في الاختيار الصح.'],
+        features: ['اتحضر المنتج ده بمكونات مختارة بعناية عشان يديك طعم أصلي هيفرق معاك من أول قطعة.', 'مناسب كهدية أو للتدليل اليومي، وبيوصل في تغليف أنيق يليق بالمناسبة.'],
+        cta: ['اطلب دلوقتي وخلي حد يحس بذوقك من أول هدية أو مفاجأة.', 'الطلبات بتتحضر بعناية، فاطلب بدري عشان يوصلك في الميعاد المناسب.']
+      }
     },
     home: {
       keywords: ['فرن','مطبخ','ديكور','سجاد','اضاءة','إضاءة','منظف','بيت','اثاث','أثاث','مفروشات','ستائر'],
       badges: ['🏠 بيتك يستاهل الأحسن', '✨ لمسة رقي جديدة', '🎯 عملي وشكله حلو'],
-      hooks: ['تفاصيل بسيطة بتفرق في شكل بيتك كله', 'منتج هيوفرلك وقت ومجهود يوميًا', 'بيتك يعكس ذوقك، ابدأ من هنا']
+      hooks: ['تفاصيل بسيطة بتفرق في شكل بيتك كله', 'منتج هيوفرلك وقت ومجهود يوميًا', 'بيتك يعكس ذوقك، ابدأ من هنا'],
+      paragraphs: {
+        problem: ['كتير من مستلزمات البيت بتكون عملية بس شكلها مش بيضيف حاجة، أو العكس شكلها حلو بس مش عملي في الاستخدام اليومي.', 'إيجاد قطعة بتجمع بين الشكل والعملية مش سهل، وده اللي بيخلي كتير من المنتجات مش بتستمر معانا.'],
+        features: ['المنتج ده اتصمم عشان يجمع بين الشكل الأنيق والاستخدام العملي في نفس الوقت، وبيناسب أي ديكور.', 'خامات قوية ومتينة بتخليه يفضل معاك لفترة طويلة من غير ما يفقد شكله أو كفاءته.'],
+        cta: ['ضيف لمسة جديدة لبيتك دلوقتي واطلب المنتج بسهولة.', 'الكمية المتاحة محدودة، فاطلب بدري قبل ما تخلص.']
+      }
     },
     course: {
       keywords: ['كورس','تدريب','استشارة','خدمة','دورة','ورشة','تعليم','محاضرة','برنامج تدريبي'],
       badges: ['🎓 استثمر في نفسك', '📈 خطوة بتغيّر مسارك', '🔥 آخر فرصة للحجز'],
-      hooks: ['اللي بيستثمر في نفسه النهاردة، بيحصد بكرة', 'مهارة توريك تفتحلك أبواب مقفولة', 'تعلّم اللي يفرق فعلاً في شغلك']
+      hooks: ['اللي بيستثمر في نفسه النهاردة، بيحصد بكرة', 'مهارة توريك تفتحلك أبواب مقفولة', 'تعلّم اللي يفرق فعلاً في شغلك'],
+      paragraphs: {
+        problem: ['كتير مننا بيحس إنه واقف في نفس المكان مهنيًا، وبيدور على فرصة حقيقية تفرق في مساره من غير ما يلاقيها.', 'المعلومات المتاحة مجانًا غالبًا مبعثرة وناقصة، وده بيخلي الوصول لمهارة حقيقية ياخد وقت أطول من اللازم.'],
+        features: ['البرنامج ده اتبنى بخطوات عملية واضحة تاخدك من نقطة البداية لحد ما توصل لنتيجة ملموسة.', 'المحتوى مبني على تجربة حقيقية، مش نظري بس، عشان تقدر تطبق اللي بتتعلمه فورًا.'],
+        cta: ['المقاعد محدودة والحجز بيقفل قريب، فاحجز مكانك دلوقتي.', 'ابدأ خطوتك الأولى النهاردة، وهتشكر نفسك بعد فترة.']
+      }
     },
     kids: {
       keywords: ['اطفال','أطفال','بيبي','رضيع','العاب','ألعاب','بيبيهات','حضانة','مواليد'],
       badges: ['👶 راحة وأمان لطفلك', '🎈 لحظات سعادة تستاهلها', '✨ اختيار الأمهات الأول'],
-      hooks: ['راحة طفلك أول أولوية عندنا', 'منتج مصمم خصيصي لسلامة وراحة صغيرك', 'كل أم بتدور على الأفضل لطفلها']
+      hooks: ['راحة طفلك أول أولوية عندنا', 'منتج مصمم خصيصي لسلامة وراحة صغيرك', 'كل أم بتدور على الأفضل لطفلها'],
+      paragraphs: {
+        problem: ['كل أم بتقلق من اختيار منتج مش آمن أو مش مناسب لعمر طفلها، وده بيخلي القرار محتاج تفكير أكتر.', 'صعب تلاقي منتج بيجمع بين الأمان والجودة والسعر المناسب في نفس الوقت.'],
+        features: ['المنتج ده اتصمم بمعايير أمان عالية عشان يديكي راحة بال وانتي بتستخدميه مع طفلك.', 'خامات آمنة وسهلة التنظيف، ومصممة عشان تتحمل الاستخدام اليومي المكثف.'],
+        cta: ['وفري لطفلك الأفضل واطلبي دلوقتي.', 'الكمية محدودة، اطلبي بدري عشان يوصلك بسرعة.']
+      }
     },
     general: {
       keywords: [],
       badges: ['🔥 عرض لفترة محدودة', '⚡ الأكتر مبيعًا الأسبوع ده', '✨ اختيار أكتر من 1000 عميل', '🎯 الأفضل في فئته', '🚀 عرض حصري النهاردة بس'],
-      hooks: ['كل يوم بيتأخر فيه قرارك… حد تاني بياخد الفرصة قبلك', 'جربه مرة واحدة وهتعرف ليه الكل بيتكلم عنه', 'مش مجرد منتج… ده الفرق اللي هتحسه من أول استخدام', 'اللي جربوه قالوا كلمة واحدة: يستاهل', 'العرض ده مش هيفضل موجود بعد النهاردة']
+      hooks: ['كل يوم بيتأخر فيه قرارك… حد تاني بياخد الفرصة قبلك', 'جربه مرة واحدة وهتعرف ليه الكل بيتكلم عنه', 'مش مجرد منتج… ده الفرق اللي هتحسه من أول استخدام', 'اللي جربوه قالوا كلمة واحدة: يستاهل', 'العرض ده مش هيفضل موجود بعد النهاردة'],
+      paragraphs: {
+        problem: ['كتير مننا بيدور على منتج يستاهل فعلاً وسط زحمة الخيارات المتشابهة، وبيتعب في الاختيار الصح.', 'الفرق بين منتج عادي ومنتج مميز بيبان في التفاصيل الصغيرة اللي مبتتلاحظش غير لما تجربها بنفسك.'],
+        features: ['المنتج ده اتحضر بعناية واهتمام بالتفاصيل عشان يديك تجربة مختلفة عن أي حاجة جربتها قبل كده.', 'الجودة هي الأساس اللي بنينا عليه المنتج ده، عشان تحس إنك اخدت قرار صح من أول استخدام.'],
+        cta: ['متأخرش في قرارك، الكمية محدودة والطلب عليه في زيادة مستمرة.', 'جرب دلوقتي واحكم بنفسك، وهتعرف ليه كل اللي جربوه رجعوا تاني.']
+      }
     }
   };
 
@@ -356,7 +462,16 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
     const socialN = Math.floor(Math.random() * 70) + 15; // بين 15 و 84
     const social = pickRandom(SOCIAL_PROOF_TEMPLATES)(socialN);
 
-    return { badge, hook, social };
+    // فقرات تسويقية تفصيلية أطول (مشكلة -> مميزات -> دعوة للشراء)
+    const productName = (title || 'المنتج ده').trim();
+    const paraProblem = pickRandom(catBank.paragraphs.problem.concat(generalBank.paragraphs.problem));
+    let paraFeatures = pickRandom(catBank.paragraphs.features.concat(generalBank.paragraphs.features));
+    const paraCta = pickRandom(catBank.paragraphs.cta.concat(generalBank.paragraphs.cta));
+
+    // ندمج اسم المنتج جوه فقرة المميزات عشان تبقى مخصصة أكتر
+    paraFeatures = `${productName} مختلف، ${paraFeatures}`;
+
+    return { badge, hook, social, paragraph1: paraProblem, paragraph2: paraFeatures, paragraph3: paraCta };
   }
 
   function generateAICopy() {
@@ -379,6 +494,9 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
       document.getElementById('inputBadgeText').value = copy.badge;
       document.getElementById('inputHookLine').value = copy.hook;
       document.getElementById('inputSocialProof').value = copy.social;
+      document.getElementById('inputAiParagraph1').value = copy.paragraph1;
+      document.getElementById('inputAiParagraph2').value = copy.paragraph2;
+      document.getElementById('inputAiParagraph3').value = copy.paragraph3;
       btn.innerHTML = original;
       btn.disabled = false;
       showMsg('تم توليد النصوص التسويقية ✨ تقدر تعدّلها أو تولّد نسخة تانية', 'ok');
@@ -388,6 +506,17 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
   // ===== إدارة الصور =====
   let existingImages = []; // روابط صور موجودة بالفعل (من قاعدة البيانات)
   let pendingFiles = [];   // ملفات جديدة لسه هترفع
+
+  // بانر المنتج (صورة واحدة)
+  let existingBannerImage = null;
+  let pendingBannerFile = null;
+
+  // صور أجزاء المنتج
+  let existingPartsImages = [];
+  let pendingPartsFiles = [];
+
+  // الريفيوهات: كل عنصر { name, text, rating }
+  let reviews = [];
 
   function renderColorGrid() {
     const grid = document.getElementById('colorGrid');
@@ -448,6 +577,130 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
   function removePendingFile(idx) {
     pendingFiles.splice(idx, 1);
     renderImagesPreview();
+  }
+
+  // ===== بانر المنتج =====
+  function renderBannerPreview() {
+    const preview = document.getElementById('bannerPreview');
+    preview.innerHTML = '';
+
+    let url = null;
+    let isPending = false;
+    if (pendingBannerFile) { url = URL.createObjectURL(pendingBannerFile); isPending = true; }
+    else if (existingBannerImage) { url = existingBannerImage; }
+
+    if (!url) return;
+
+    const thumb = document.createElement('div');
+    thumb.className = 'img-thumb banner-thumb';
+    thumb.innerHTML = `<img src="${url}"><button class="remove-btn" onclick="removeBannerImage()">✕</button>`;
+    preview.appendChild(thumb);
+  }
+
+  function handleBannerFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+      pendingBannerFile = file;
+      existingBannerImage = null;
+      renderBannerPreview();
+    }
+    event.target.value = '';
+  }
+
+  function removeBannerImage() {
+    pendingBannerFile = null;
+    existingBannerImage = null;
+    renderBannerPreview();
+  }
+
+  // ===== صور أجزاء المنتج =====
+  function renderPartsPreview() {
+    const preview = document.getElementById('partsPreview');
+    preview.innerHTML = '';
+
+    existingPartsImages.forEach((url, idx) => {
+      const thumb = document.createElement('div');
+      thumb.className = 'img-thumb';
+      thumb.innerHTML = `<img src="${url}"><button class="remove-btn" onclick="removeExistingPartImage(${idx})">✕</button>`;
+      preview.appendChild(thumb);
+    });
+
+    pendingPartsFiles.forEach((file, idx) => {
+      const thumb = document.createElement('div');
+      thumb.className = 'img-thumb';
+      const url = URL.createObjectURL(file);
+      thumb.innerHTML = `<img src="${url}"><button class="remove-btn" onclick="removePendingPartFile(${idx})">✕</button>`;
+      preview.appendChild(thumb);
+    });
+  }
+
+  function handlePartsFileSelect(event) {
+    const files = Array.from(event.target.files);
+    pendingPartsFiles = pendingPartsFiles.concat(files);
+    renderPartsPreview();
+    event.target.value = '';
+  }
+
+  function removeExistingPartImage(idx) {
+    existingPartsImages.splice(idx, 1);
+    renderPartsPreview();
+  }
+
+  function removePendingPartFile(idx) {
+    pendingPartsFiles.splice(idx, 1);
+    renderPartsPreview();
+  }
+
+  // ===== الريفيوهات =====
+  function renderReviews() {
+    const list = document.getElementById('reviewsList');
+    list.innerHTML = '';
+
+    if (reviews.length === 0) {
+      const empty = document.createElement('p');
+      empty.className = 'section-hint';
+      empty.style.margin = '0 0 4px';
+      empty.innerText = 'لسه مفيش ريفيوهات، دوس "إضافة ريفيو" عشان تضيف واحد.';
+      list.appendChild(empty);
+    }
+
+    reviews.forEach((review, idx) => {
+      const card = document.createElement('div');
+      card.className = 'review-card';
+      card.innerHTML = `
+        <button type="button" class="remove-review" onclick="removeReview(${idx})">✕</button>
+        <div class="review-row">
+          <input type="text" placeholder="اسم العميل" value="${escapeAttr(review.name)}" oninput="updateReview(${idx}, 'name', this.value)">
+          <select onchange="updateReview(${idx}, 'rating', this.value)">
+            ${[5,4,3,2,1].map(r => `<option value="${r}" ${String(review.rating) === String(r) ? 'selected' : ''}>${'⭐'.repeat(r)}</option>`).join('')}
+          </select>
+        </div>
+        <textarea placeholder="نص الريفيو..." oninput="updateReview(${idx}, 'text', this.value)">${escapeHtml(review.text)}</textarea>
+      `;
+      list.appendChild(card);
+    });
+  }
+
+  function escapeAttr(str) {
+    return (str || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+  }
+  function escapeHtml(str) {
+    return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function addReview() {
+    reviews.push({ name: '', text: '', rating: 5 });
+    renderReviews();
+  }
+
+  function removeReview(idx) {
+    reviews.splice(idx, 1);
+    renderReviews();
+  }
+
+  function updateReview(idx, field, value) {
+    if (!reviews[idx]) return;
+    reviews[idx][field] = value;
   }
 
   function showMsg(text, type) {
@@ -523,6 +776,7 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
 
     renderColorGrid();
     renderStyleGrid();
+    renderReviews();
 
     if (pageId) {
       document.getElementById('formTitle').innerText = '⚙️ تعديل اللاندينج بيدج';
@@ -547,6 +801,9 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
       document.getElementById('inputBadgeText').value = data.badge_text || '';
       document.getElementById('inputHookLine').value = data.hook_line || '';
       document.getElementById('inputSocialProof').value = data.social_proof_text || '';
+      document.getElementById('inputAiParagraph1').value = data.ai_paragraph_1 || '';
+      document.getElementById('inputAiParagraph2').value = data.ai_paragraph_2 || '';
+      document.getElementById('inputAiParagraph3').value = data.ai_paragraph_3 || '';
 
       selectedColor = data.theme_color || 'gold';
       selectedStyle = data.theme_style && ['classic','modern','professional'].includes(data.theme_style) ? data.theme_style : 'modern';
@@ -557,6 +814,24 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
         existingImages = data.images ? JSON.parse(data.images) : [];
       } catch (e) { existingImages = []; }
       renderImagesPreview();
+
+      existingBannerImage = data.banner_image || null;
+      renderBannerPreview();
+
+      try {
+        existingPartsImages = data.parts_images ? JSON.parse(data.parts_images) : [];
+      } catch (e) { existingPartsImages = []; }
+      renderPartsPreview();
+
+      try {
+        const featuresArr = data.features_list ? JSON.parse(data.features_list) : [];
+        document.getElementById('inputFeatures').value = Array.isArray(featuresArr) ? featuresArr.join('\n') : '';
+      } catch (e) { document.getElementById('inputFeatures').value = ''; }
+
+      try {
+        reviews = data.reviews ? JSON.parse(data.reviews) : [];
+      } catch (e) { reviews = []; }
+      renderReviews();
 
       isPublished = !!data.is_published;
       document.getElementById('publishBox').style.display = 'block';
@@ -572,6 +847,10 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
     const badgeText = document.getElementById('inputBadgeText').value.trim();
     const hookLine = document.getElementById('inputHookLine').value.trim();
     const socialProof = document.getElementById('inputSocialProof').value.trim();
+    const aiParagraph1 = document.getElementById('inputAiParagraph1').value.trim();
+    const aiParagraph2 = document.getElementById('inputAiParagraph2').value.trim();
+    const aiParagraph3 = document.getElementById('inputAiParagraph3').value.trim();
+    const featuresList = document.getElementById('inputFeatures').value.split('\n').map(f => f.trim()).filter(Boolean);
 
     if (!title || !price || !whatsapp) {
       showMsg('من فضلك املأ عنوان المنتج والسعر ورقم الواتساب الأول عشان تقدر تعاين', 'err');
@@ -579,6 +858,8 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
     }
 
     const allImages = existingImages.concat(pendingFiles.map(f => URL.createObjectURL(f)));
+    const allPartsImages = existingPartsImages.concat(pendingPartsFiles.map(f => URL.createObjectURL(f)));
+    const bannerUrl = pendingBannerFile ? URL.createObjectURL(pendingBannerFile) : (existingBannerImage || '');
 
     const params = new URLSearchParams();
     params.set('title', title);
@@ -590,17 +871,24 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
     if (badgeText) params.set('badge', badgeText);
     if (hookLine) params.set('hook', hookLine);
     if (socialProof) params.set('social', socialProof);
+    if (aiParagraph1) params.set('paragraph1', aiParagraph1);
+    if (aiParagraph2) params.set('paragraph2', aiParagraph2);
+    if (aiParagraph3) params.set('paragraph3', aiParagraph3);
     if (allImages.length) params.set('images', JSON.stringify(allImages));
+    if (bannerUrl) params.set('banner', bannerUrl);
+    if (allPartsImages.length) params.set('parts', JSON.stringify(allPartsImages));
+    if (featuresList.length) params.set('features', JSON.stringify(featuresList));
+    if (reviews.length) params.set('reviews', JSON.stringify(reviews));
 
     window.open('landing.html?' + params.toString(), '_blank');
   }
 
   // رفع الصور الجديدة على Supabase Storage وإرجاع روابطها العامة
-  async function uploadPendingImages(targetPageId) {
+  async function uploadFilesToStorage(files, targetPageId, subFolder) {
     const uploadedUrls = [];
-    for (const file of pendingFiles) {
+    for (const file of files) {
       const cleanName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
-      const path = `${currentUserId}/${targetPageId}/${Date.now()}_${cleanName}`;
+      const path = `${currentUserId}/${targetPageId}/${subFolder}/${Date.now()}_${cleanName}`;
 
       const { error: uploadError } = await _supabase
         .storage
@@ -621,6 +909,10 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
     return uploadedUrls;
   }
 
+  async function uploadPendingImages(targetPageId) {
+    return uploadFilesToStorage(pendingFiles, targetPageId, 'gallery');
+  }
+
   async function savePage() {
     const title = document.getElementById('inputTitle').value.trim();
     const description = document.getElementById('inputDescription').value.trim();
@@ -629,6 +921,10 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
     const badgeText = document.getElementById('inputBadgeText').value.trim();
     const hookLine = document.getElementById('inputHookLine').value.trim();
     const socialProof = document.getElementById('inputSocialProof').value.trim();
+    const aiParagraph1 = document.getElementById('inputAiParagraph1').value.trim();
+    const aiParagraph2 = document.getElementById('inputAiParagraph2').value.trim();
+    const aiParagraph3 = document.getElementById('inputAiParagraph3').value.trim();
+    const featuresList = document.getElementById('inputFeatures').value.split('\n').map(f => f.trim()).filter(Boolean);
 
     if (!title || !price || !whatsapp) {
       showMsg('من فضلك املأ عنوان المنتج والسعر ورقم الواتساب على الأقل', 'err');
@@ -652,6 +948,11 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
         badge_text: badgeText,
         hook_line: hookLine,
         social_proof_text: socialProof,
+        ai_paragraph_1: aiParagraph1,
+        ai_paragraph_2: aiParagraph2,
+        ai_paragraph_3: aiParagraph3,
+        features_list: JSON.stringify(featuresList),
+        reviews: JSON.stringify(reviews),
       };
 
       if (!targetId) {
@@ -665,18 +966,39 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
         targetId = data.id;
       }
 
-      // ارفع أي صور جديدة
+      // ارفع أي صور جديدة (المعرض + البانر + الأجزاء)
       let newUrls = [];
-      if (pendingFiles.length > 0) {
+      let newBannerUrl = existingBannerImage;
+      let newPartsUrls = [];
+
+      if (pendingFiles.length > 0 || pendingBannerFile || pendingPartsFiles.length > 0) {
         showMsg('جاري رفع الصور...', '');
+      }
+
+      if (pendingFiles.length > 0) {
         newUrls = await uploadPendingImages(targetId);
       }
 
+      if (pendingBannerFile) {
+        const bannerUrls = await uploadFilesToStorage([pendingBannerFile], targetId, 'banner');
+        newBannerUrl = bannerUrls[0] || existingBannerImage;
+      }
+
+      if (pendingPartsFiles.length > 0) {
+        newPartsUrls = await uploadFilesToStorage(pendingPartsFiles, targetId, 'parts');
+      }
+
       const finalImages = existingImages.concat(newUrls);
+      const finalPartsImages = existingPartsImages.concat(newPartsUrls);
 
       const { error: updateError } = await _supabase
         .from('user_pages')
-        .update({ ...baseData, images: JSON.stringify(finalImages) })
+        .update({
+          ...baseData,
+          images: JSON.stringify(finalImages),
+          banner_image: newBannerUrl,
+          parts_images: JSON.stringify(finalPartsImages),
+        })
         .eq('id', targetId)
         .eq('user_id', currentUserId);
 
@@ -689,8 +1011,14 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
         setTimeout(() => window.location.href = 'editor.html?id=' + targetId, 900);
       } else {
         pendingFiles = [];
+        pendingBannerFile = null;
+        pendingPartsFiles = [];
         existingImages = finalImages;
+        existingBannerImage = newBannerUrl;
+        existingPartsImages = finalPartsImages;
         renderImagesPreview();
+        renderBannerPreview();
+        renderPartsPreview();
         showMsg('تم حفظ التعديلات بنجاح! 🚀', 'ok');
       }
     } catch (err) {
