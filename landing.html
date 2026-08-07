@@ -33,8 +33,24 @@ body {
 
 .loading-screen { min-height: 100vh; display:flex; align-items:center; justify-content:center; color: var(--muted); font-size: 14px; }
 
+/* ============ BANNER (أول حاجة في اللاند) ============ */
+.top-banner-wrap { display: none; width: 100%; }
+.top-banner-wrap img {
+  width: 100%; display: block; object-fit: cover;
+  max-height: 480px; min-height: 200px;
+}
+.hero-sentence {
+  display: none;
+  max-width: 680px; margin: 0 auto; padding: 26px 22px 4px;
+  text-align: center; font-size: 26px; line-height: 1.5; font-weight: 900;
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
 /* ============ HERO ============ */
 .hero { padding: 60px 20px 30px; text-align: center; max-width: 680px; margin: 0 auto; }
+.top-banner-wrap ~ .hero-sentence + .hero,
+.hero-sentence[style*="block"] + .hero { padding-top: 30px; }
 .badge {
   display: inline-block; background: color-mix(in srgb, var(--accent) 18%, transparent);
   border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
@@ -46,11 +62,6 @@ body {
   50% { box-shadow: 0 0 0 8px color-mix(in srgb, var(--accent) 0%, transparent); }
 }
 .hero h1 { font-size: 32px; line-height: 1.4; margin-bottom: 14px; font-weight: 900; }
-.hook-line {
-  font-size: 15px; color: var(--accent2); font-weight: 700; margin: -4px 0 18px; line-height: 1.6;
-  opacity: 0; animation: hookFadeIn 0.7s ease-out 0.15s forwards;
-}
-@keyframes hookFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
 .rating-row { display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom: 18px; font-size: 13px; color: var(--muted); }
 .rating-row .stars { color: var(--accent2); letter-spacing: 2px; }
@@ -128,6 +139,20 @@ body {
   background: color-mix(in srgb, var(--accent) 10%, transparent); padding: 8px; border-radius: 12px;
 }
 
+/* ============ فقرة القصة (paragraph1) ============ */
+.story-section {
+  display: none; max-width: 620px; margin: 0 auto 34px; padding: 0 26px; text-align: center;
+}
+.story-section .story-mark { color: var(--accent2); font-size: 22px; margin-bottom: 10px; opacity: 0.8; }
+.story-section p {
+  color: var(--muted); font-size: 15px; line-height: 2; white-space: pre-line;
+}
+
+/* ============ عنوان فرعي + فقرة المميزات (paragraph2) ============ */
+.section-heading { text-align: center; max-width: 580px; margin: 0 auto 18px; padding: 0 22px; }
+.section-heading .eyebrow { color: var(--accent2); font-size: 12px; font-weight: 900; letter-spacing: 1px; margin-bottom: 8px; }
+.section-heading p { color: var(--muted); font-size: 14px; line-height: 1.9; }
+
 /* ============ FEATURES ============ */
 .features {
   max-width: 560px; margin: 0 auto 40px; padding: 0 20px;
@@ -138,7 +163,34 @@ body {
   border-radius: 16px; padding: 18px; text-align: center;
 }
 .feature-item .ic { font-size: 22px; margin-bottom: 8px; }
-.feature-item .txt { font-size: 12px; color: var(--muted); }
+.feature-item .txt { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+/* ============ صور أجزاء / تفاصيل المنتج ============ */
+.parts-section { display: none; max-width: 580px; margin: 0 auto 40px; padding: 0 20px; }
+.parts-section .section-title { text-align: center; font-size: 18px; font-weight: 900; margin-bottom: 16px; }
+.parts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); gap: 10px; }
+.parts-grid img {
+  width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03);
+}
+
+/* ============ ريفيوهات العملاء ============ */
+.reviews-section { display: none; max-width: 580px; margin: 0 auto 40px; padding: 0 20px; }
+.reviews-section .section-title { text-align: center; font-size: 18px; font-weight: 900; margin-bottom: 16px; }
+.reviews-grid { display: flex; flex-direction: column; gap: 12px; }
+.review-item {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px; padding: 16px 20px;
+}
+.review-item .r-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 10px; }
+.review-item .r-name { font-weight: 900; font-size: 13px; }
+.review-item .r-stars { color: var(--accent2); font-size: 12px; letter-spacing: 1px; white-space: nowrap; }
+.review-item .r-text { color: var(--muted); font-size: 13px; line-height: 1.8; }
+
+/* ============ فقرة الختام + دعوة نهائية (paragraph3) ============ */
+.closing-section { display: none; max-width: 560px; margin: 0 auto 40px; padding: 0 20px; text-align: center; }
+.closing-section .closing-text { font-size: 16px; font-weight: 800; line-height: 1.8; margin-bottom: 20px; }
+.closing-section .cta-btn { max-width: 420px; margin: 0 auto; }
 
 footer { text-align: center; padding: 24px; color: var(--muted); font-size: 11px; }
 
@@ -195,7 +247,8 @@ footer { text-align: center; padding: 24px; color: var(--muted); font-size: 11px
 
 /* ============ ستايل: كلاسيك ============ */
 body.style-classic .hero h1,
-body.style-classic .price-row .amount {
+body.style-classic .price-row .amount,
+body.style-classic .hero-sentence {
   font-family: 'Amiri', serif;
 }
 body.style-classic .hero h1 { font-size: 34px; font-weight: 700; color: var(--accent2); }
@@ -219,6 +272,7 @@ body.style-modern .price-row .amount { text-shadow: 0 0 20px color-mix(in srgb, 
 /* ============ ستايل: احترافي ============ */
 body.style-professional { font-family: 'Cairo', sans-serif; }
 body.style-professional .hero h1 { font-family: 'Cairo', sans-serif; font-weight: 800; }
+body.style-professional .hero-sentence { font-family: 'Cairo', sans-serif; }
 body.style-professional .badge { border-radius: 8px; }
 body.style-professional .product-card-inner { border-radius: 14px; background: linear-gradient(160deg, #131313, #0a0a0a); }
 body.style-professional .gallery-main { border-radius: 14px; }
@@ -234,10 +288,15 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
 <div id="loadingScreen" class="loading-screen">جاري تحميل اللاندينج بيدج...</div>
 
 <div id="pageContent" style="display:none;">
+
+  <div class="top-banner-wrap" id="bannerWrap">
+    <img id="outBanner" alt="">
+  </div>
+  <p class="hero-sentence" id="outHeroSentence"></p>
+
   <div class="hero">
     <div class="badge" id="outBadge">🔥 عرض محدود</div>
     <h1 id="outTitle">اسم المنتج</h1>
-    <p class="hook-line" id="outHook" style="display:none;"></p>
     <div class="rating-row">
       <span class="stars">★★★★★</span>
       <span>4.9 (312 تقييم)</span>
@@ -247,6 +306,11 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
   <div class="gallery" id="galleryWrap" style="display:none;">
     <div class="gallery-main" id="galleryMain"><span class="placeholder">🎁</span></div>
     <div class="gallery-thumbs" id="galleryThumbs"></div>
+  </div>
+
+  <div class="story-section" id="storySection">
+    <div class="story-mark">❝</div>
+    <p id="outParagraph1"></p>
   </div>
 
   <div class="product-card" id="orderFormSection">
@@ -290,10 +354,32 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
     </div>
   </div>
 
-  <div class="features">
+  <div class="section-heading" id="paragraph2Wrap" style="display:none;">
+    <div class="eyebrow">✨ ليه تختار المنتج ده</div>
+    <p id="outParagraph2"></p>
+  </div>
+
+  <div class="features" id="featuresGrid">
     <div class="feature-item"><div class="ic">🏆</div><div class="txt">جودة مضمونة</div></div>
     <div class="feature-item"><div class="ic">⚡</div><div class="txt">شحن سريع</div></div>
     <div class="feature-item"><div class="ic">🔒</div><div class="txt">دفع آمن</div></div>
+  </div>
+
+  <div class="parts-section" id="partsSection">
+    <div class="section-title">🧩 تفاصيل أكتر عن المنتج</div>
+    <div class="parts-grid" id="partsGrid"></div>
+  </div>
+
+  <div class="reviews-section" id="reviewsSection">
+    <div class="section-title">💬 آراء عملائنا</div>
+    <div class="reviews-grid" id="reviewsGrid"></div>
+  </div>
+
+  <div class="closing-section" id="closingSection">
+    <p class="closing-text" id="outParagraph3"></p>
+    <button type="button" class="cta-btn" onclick="scrollToOrderForm()">
+      <span>🛒 اطلب الآن</span>
+    </button>
   </div>
 
   <footer>Powered by PageKit PRO</footer>
@@ -320,6 +406,13 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
 
   const { createClient } = supabase;
   const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const DEFAULT_FEATURES = ['جودة مضمونة', 'شحن سريع', 'دفع آمن'];
+  const FEATURE_ICONS = ['🏆', '⚡', '🔒', '✅', '💎', '🎯', '🌟', '📦'];
+
+  function escapeHtml(str) {
+    return (str || '').toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
 
   const COLOR_MAP = {
     gold:   { a: '#C99A3E', a2: '#E4B84A' },
@@ -364,6 +457,51 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
     });
   }
 
+  function renderFeatures(list) {
+    const grid = document.getElementById('featuresGrid');
+    const items = (list && list.length) ? list : DEFAULT_FEATURES;
+    grid.innerHTML = '';
+    items.forEach((txt, idx) => {
+      const el = document.createElement('div');
+      el.className = 'feature-item';
+      el.innerHTML = `<div class="ic">${FEATURE_ICONS[idx % FEATURE_ICONS.length]}</div><div class="txt">${escapeHtml(txt)}</div>`;
+      grid.appendChild(el);
+    });
+  }
+
+  function renderParts(list) {
+    if (!list || list.length === 0) return;
+    document.getElementById('partsSection').style.display = 'block';
+    const grid = document.getElementById('partsGrid');
+    grid.innerHTML = '';
+    list.forEach(url => {
+      const img = document.createElement('img');
+      img.src = url;
+      grid.appendChild(img);
+    });
+  }
+
+  function renderReviews(list) {
+    if (!list || list.length === 0) return;
+    document.getElementById('reviewsSection').style.display = 'block';
+    const grid = document.getElementById('reviewsGrid');
+    grid.innerHTML = '';
+    list.forEach(r => {
+      const ratingNum = Math.min(5, Math.max(1, parseInt(r.rating, 10) || 5));
+      const stars = '★'.repeat(ratingNum) + '☆'.repeat(5 - ratingNum);
+      const item = document.createElement('div');
+      item.className = 'review-item';
+      item.innerHTML = `
+        <div class="r-top">
+          <span class="r-name">${escapeHtml(r.name || 'عميل')}</span>
+          <span class="r-stars">${stars}</span>
+        </div>
+        <p class="r-text">${escapeHtml(r.text || '')}</p>
+      `;
+      grid.appendChild(item);
+    });
+  }
+
   function startCountdown() {
     let totalSeconds = 23 * 3600 + 59 * 60 + 59;
     const el = document.getElementById('countdownTimer');
@@ -380,7 +518,8 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
   let pageState = { pageId: null, ownerUserId: null, title: '', price: '', whatsapp: '', isPreview: true };
 
   function renderPage(data) {
-    const { title, description, price, whatsapp, color, style, images, badge, hook, social } = data;
+    const { title, description, price, whatsapp, color, style, images, badge, hook, social, banner,
+            paragraph1, paragraph2, paragraph3, parts, features, reviews } = data;
 
     applyTheme(color, style);
 
@@ -398,17 +537,45 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
       document.getElementById('outBadge').innerText = badge;
     }
 
+    // بانر المنتج - يظهر لوحده وعريض في أول اللاند
+    if (banner) {
+      document.getElementById('outBanner').src = banner;
+      document.getElementById('bannerWrap').style.display = 'block';
+    }
+
+    // الجملة التسويقية الكبيرة اللي بتيجي بعد البانر مباشرة
     if (hook) {
-      const hookEl = document.getElementById('outHook');
-      hookEl.innerText = hook;
-      hookEl.style.display = 'block';
+      const sentenceEl = document.getElementById('outHeroSentence');
+      sentenceEl.innerText = hook;
+      sentenceEl.style.display = 'block';
     }
 
     if (social) {
       document.getElementById('outSocial').innerText = social;
     }
 
+    // فقرة القصة/المشكلة اللي العميل كتبها
+    if (paragraph1) {
+      document.getElementById('outParagraph1').innerText = paragraph1;
+      document.getElementById('storySection').style.display = 'block';
+    }
+
+    // فقرة المميزات كمقدمة لقسم المزايا
+    if (paragraph2) {
+      document.getElementById('outParagraph2').innerText = paragraph2;
+      document.getElementById('paragraph2Wrap').style.display = 'block';
+    }
+
+    // فقرة الختام + دعوة نهائية للشراء
+    if (paragraph3) {
+      document.getElementById('outParagraph3').innerText = paragraph3;
+      document.getElementById('closingSection').style.display = 'block';
+    }
+
     setupGallery(images);
+    renderFeatures(features);
+    renderParts(parts);
+    renderReviews(reviews);
 
     pageState.title = title;
     pageState.price = price;
@@ -512,6 +679,15 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
       let images = [];
       try { images = data.images ? JSON.parse(data.images) : []; } catch (e) {}
 
+      let partsImages = [];
+      try { partsImages = data.parts_images ? JSON.parse(data.parts_images) : []; } catch (e) {}
+
+      let featuresList = [];
+      try { featuresList = data.features_list ? JSON.parse(data.features_list) : []; } catch (e) {}
+
+      let reviewsList = [];
+      try { reviewsList = data.reviews ? JSON.parse(data.reviews) : []; } catch (e) {}
+
       pageState.pageId = data.id;
       pageState.ownerUserId = data.user_id;
       pageState.isPreview = false;
@@ -526,7 +702,14 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
         images: images,
         badge: data.badge_text,
         hook: data.hook_line,
-        social: data.social_proof_text
+        social: data.social_proof_text,
+        banner: data.banner_image,
+        paragraph1: data.ai_paragraph_1,
+        paragraph2: data.ai_paragraph_2,
+        paragraph3: data.ai_paragraph_3,
+        parts: partsImages,
+        features: featuresList,
+        reviews: reviewsList
       });
     } else {
       // ===== وضع المعاينة: هات البيانات من رابط الصفحة نفسه =====
@@ -535,6 +718,15 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
 
       let images = [];
       try { images = params.get('images') ? JSON.parse(params.get('images')) : []; } catch (e) {}
+
+      let partsImages = [];
+      try { partsImages = params.get('parts') ? JSON.parse(params.get('parts')) : []; } catch (e) {}
+
+      let featuresList = [];
+      try { featuresList = params.get('features') ? JSON.parse(params.get('features')) : []; } catch (e) {}
+
+      let reviewsList = [];
+      try { reviewsList = params.get('reviews') ? JSON.parse(params.get('reviews')) : []; } catch (e) {}
 
       renderPage({
         title: params.get('title') || 'اسم المنتج',
@@ -546,7 +738,14 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
         images: images,
         badge: params.get('badge') || '',
         hook: params.get('hook') || '',
-        social: params.get('social') || ''
+        social: params.get('social') || '',
+        banner: params.get('banner') || '',
+        paragraph1: params.get('paragraph1') || '',
+        paragraph2: params.get('paragraph2') || '',
+        paragraph3: params.get('paragraph3') || '',
+        parts: partsImages,
+        features: featuresList,
+        reviews: reviewsList
       });
     }
   }
