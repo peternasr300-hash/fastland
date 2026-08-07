@@ -289,6 +289,13 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
       <input type="text" id="inputWhatsapp" placeholder="مثال: 201000000000">
     </div>
 
+    <div class="section-label">📊 التتبع والإعلانات (اختياري)</div>
+    <p class="section-hint">لو هتعمل إعلان للاندينج بيدج دي على فيسبوك، حط آيدي البيكسل هنا عشان تقدر تتابع نتائج الإعلان وتعمل Retargeting.</p>
+    <div class="f-group">
+      <label>🎯 آيدي بيكسل فيسبوك (Facebook Pixel ID):</label>
+      <input type="text" id="inputPixelId" placeholder="مثال: 1234567890123456">
+    </div>
+
     <div class="actions-row">
       <button class="btn-build" id="btnSave" onclick="savePage()">💾 حفظ</button>
       <button class="btn-preview" id="btnPreview" onclick="previewPage()">👁️ معاينة</button>
@@ -798,6 +805,7 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
       document.getElementById('inputDescription').value = data.description || '';
       document.getElementById('inputNewPrice').value = data.product_price || '';
       document.getElementById('inputWhatsapp').value = data.whatsapp_number || '';
+      document.getElementById('inputPixelId').value = data.fb_pixel_id || '';
       document.getElementById('inputBadgeText').value = data.badge_text || '';
       document.getElementById('inputHookLine').value = data.hook_line || '';
       document.getElementById('inputSocialProof').value = data.social_proof_text || '';
@@ -851,6 +859,7 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
     const aiParagraph2 = document.getElementById('inputAiParagraph2').value.trim();
     const aiParagraph3 = document.getElementById('inputAiParagraph3').value.trim();
     const featuresList = document.getElementById('inputFeatures').value.split('\n').map(f => f.trim()).filter(Boolean);
+    const pixelId = document.getElementById('inputPixelId').value.trim();
 
     if (!title || !price || !whatsapp) {
       showMsg('من فضلك املأ عنوان المنتج والسعر ورقم الواتساب الأول عشان تقدر تعاين', 'err');
@@ -879,6 +888,7 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
     if (allPartsImages.length) params.set('parts', JSON.stringify(allPartsImages));
     if (featuresList.length) params.set('features', JSON.stringify(featuresList));
     if (reviews.length) params.set('reviews', JSON.stringify(reviews));
+    if (pixelId) params.set('pixel', pixelId);
 
     window.open('landing.html?' + params.toString(), '_blank');
   }
@@ -925,6 +935,7 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
     const aiParagraph2 = document.getElementById('inputAiParagraph2').value.trim();
     const aiParagraph3 = document.getElementById('inputAiParagraph3').value.trim();
     const featuresList = document.getElementById('inputFeatures').value.split('\n').map(f => f.trim()).filter(Boolean);
+    const pixelId = document.getElementById('inputPixelId').value.trim();
 
     if (!title || !price || !whatsapp) {
       showMsg('من فضلك املأ عنوان المنتج والسعر ورقم الواتساب على الأقل', 'err');
@@ -953,6 +964,7 @@ body { font-family: 'Tajawal', sans-serif; background: #0f0a14; color: var(--whi
         ai_paragraph_3: aiParagraph3,
         features_list: JSON.stringify(featuresList),
         reviews: JSON.stringify(reviews),
+        fb_pixel_id: pixelId,
       };
 
       if (!targetId) {
