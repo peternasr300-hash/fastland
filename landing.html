@@ -337,6 +337,10 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
           <label>رقم الموبايل:</label>
           <input type="text" id="orderPhone" placeholder="01xxxxxxxxx">
         </div>
+        <div class="f-group">
+          <label>العنوان بالتفصيل:</label>
+          <input type="text" id="orderAddress" placeholder="المحافظة - المنطقة - الشارع">
+        </div>
         <div class="order-error" id="orderError"></div>
 
         <button type="button" id="whatsappCta" class="cta-btn" onclick="submitOrder()">
@@ -637,12 +641,13 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
   async function submitOrder() {
     const name = document.getElementById('orderName').value.trim();
     const phone = document.getElementById('orderPhone').value.trim();
+    const address = document.getElementById('orderAddress').value.trim();
     const errorEl = document.getElementById('orderError');
     const btnText = document.getElementById('orderBtnText');
     const btn = document.getElementById('whatsappCta');
 
-    if (!name || !phone) {
-      errorEl.innerText = 'من فضلك اكتب الاسم ورقم الموبايل';
+    if (!name || !phone || !address) {
+      errorEl.innerText = 'من فضلك اكتب الاسم ورقم الموبايل والعنوان';
       return;
     }
     errorEl.innerText = '';
@@ -663,6 +668,7 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
         user_id: pageState.ownerUserId,
         customer_name: name,
         customer_phone: phone,
+        customer_address: address,
         product_title: pageState.title,
         product_price: pageState.price
       });
@@ -678,6 +684,7 @@ body.style-professional .price-row .amount { -webkit-text-fill-color: unset; bac
 
     document.getElementById('orderName').value = '';
     document.getElementById('orderPhone').value = '';
+    document.getElementById('orderAddress').value = '';
 
     // نبعت إيفنت للبيكسل عشان فيسبوك يعرف إن الطلب ده تم، ويستخدمه في تحسين الإعلان
     if (pageState.pixelId && typeof fbq === 'function') {
